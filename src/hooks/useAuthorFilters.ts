@@ -20,6 +20,8 @@ export function useAuthorFilters() {
 			const params = new URLSearchParams(searchParams.toString());
 			if (filter.name) {
 				params.set("name", filter.name);
+			} else {
+				params.delete("name");
 			}
 
 			if (filter.expertise) {

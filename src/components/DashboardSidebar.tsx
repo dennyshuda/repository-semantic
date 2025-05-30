@@ -6,9 +6,9 @@ import { FiBook, FiHome, FiLogOut, FiPlusCircle, FiSearch, FiUsers } from "react
 const LinkItems = [
 	{ name: "Dashboard", icon: FiHome, href: "/dashboard" },
 	{ name: "Articles", icon: FiBook, href: "/dashboard/article" },
-	{ name: "Add Article", icon: FiPlusCircle, href: "/dashboard/article/add", indent: true },
+	{ name: "Add Article", icon: FiPlusCircle, href: "/dashboard/article/create", indent: true },
 	{ name: "Authors", icon: FiUsers, href: "/dashboard/author" },
-	{ name: "Add Author", icon: FiPlusCircle, href: "/dashboard/author/add", indent: true },
+	{ name: "Add Author", icon: FiPlusCircle, href: "/dashboard/author/create", indent: true },
 	{ name: "Search", icon: FiSearch, href: "/dashboard" },
 ];
 
@@ -58,7 +58,14 @@ export default function DashboardSidebar() {
 	};
 
 	return (
-		<Box borderRight="1px" w={{ base: "280px" }} pos="fixed" h="full" boxShadow="sm">
+		<Box
+			borderRight="1px"
+			display={{ base: "none", md: "block" }}
+			w={{ base: "280px" }}
+			pos="fixed"
+			h="full"
+			boxShadow="sm"
+		>
 			<Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
 				<Text fontSize="xl" fontWeight="bold">
 					Admin Dashboard

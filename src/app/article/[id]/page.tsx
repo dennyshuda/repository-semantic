@@ -22,8 +22,6 @@ export default async function ArticlePageId({ params }: { params: Promise<{ id: 
 
 	const data = await getArticleById(id);
 
-	console.log(data);
-
 	return (
 		<Box as="main">
 			<Box maxW="1200px" mx="auto" p={{ base: 4, md: 6, lg: 8 }}>

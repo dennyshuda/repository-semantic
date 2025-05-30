@@ -49,8 +49,6 @@ export const getArticleById = async (id: string) => {
 
 	const parsedCollaborators = parseCollaboratorsArticle(binding.collaborators.value);
 
-	await new Promise((r) => setTimeout(r, 2000));
-
 	return {
 		article: {
 			id: binding.id.value,

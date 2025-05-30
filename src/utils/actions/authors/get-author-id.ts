@@ -56,15 +56,13 @@ export const getAuthorById = async (id: string) => {
 	const result = await executeQuery(sparqlQuery);
 	const binding = result.results.bindings[0];
 
-	const parsedArticles =
-		binding.articles?.value.length !== 0
-			? parseArticles(binding.articles.value).sort((a, b) => b.year - a.year)
-			: [];
+	console.log(binding);
 
-	const parsedCollaborators =
-		binding.collaborators?.value.length !== 0
-			? parseCollaborators(binding.collaborators.value)
-			: [];
+	const parsedArticles = binding.articles?.value ? parseArticles(binding.articles.value) : [];
+
+	const parsedCollaborators = binding.collaborators?.value
+		? parseCollaborators(binding.collaborators.value)
+		: [];
 
 	return {
 		author: {
