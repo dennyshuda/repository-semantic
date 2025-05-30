@@ -1,6 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 import { getAllAuthors } from "../actions/authors/get-all-authors";
 
-export const useGetAllAuthors = () => {
-	return useQuery({ queryKey: ["posts"], queryFn: getAllAuthors });
+interface UseGetAllAuthorsProps {
+	name?: string;
+	department?: string;
+	expertise?: string;
+}
+
+export const useGetAllAuthors = ({ name, department, expertise }: UseGetAllAuthorsProps) => {
+	return useQuery({
+		queryKey: ["authors", name, department, expertise],
+		queryFn: () => getAllAuthors({ name, department, expertise }),
+	});
 };
