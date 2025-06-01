@@ -1,5 +1,6 @@
 "use client";
 
+import { deleteAuthorById } from "@/utils/actions/authors/delete-author-id";
 import { useGetAllAuthors } from "@/utils/hooks/useGetAllAuthors";
 import { Author } from "@/utils/interfaces/authors";
 import {
@@ -19,6 +20,7 @@ import {
 	Table,
 	Text,
 } from "@chakra-ui/react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Suspense, useState } from "react";
@@ -34,16 +36,28 @@ export default function DashboardAuthorPage() {
 
 	const { data } = useGetAllAuthors({ department: "", expertise: "", name: localSearch });
 
-	console.log(data);
+	const debounced = useDebouncedCallback((value: string) => {
+		setLocalSearch(value);
+	}, 1000);
 
 	const handleClickEdit = (author: Author) => {
 		localStorage.setItem("author", JSON.stringify(author));
 		router.push(`/dashboard/author/edit/${author.id}`);
 	};
 
-	const debounced = useDebouncedCallback((value: string) => {
-		setLocalSearch(value);
-	}, 1000);
+	const queryClient = useQueryClient();
+
+	const { mutate } = useMutation({
+		mutationFn: deleteAuthorById,
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["authors"] });
+		},
+	});
+
+	const handleClickDelete = async () => {
+		mutate({ id: deleteAuthor!.id });
+		setOpen(false);
+	};
 
 	return (
 		<Box>
@@ -85,7 +99,7 @@ export default function DashboardAuthorPage() {
 								<Table.Row>
 									<Table.ColumnHeader>Author</Table.ColumnHeader>
 									<Table.ColumnHeader>Department</Table.ColumnHeader>
-									<Table.ColumnHeader>Expertise</Table.ColumnHeader>
+									<Table.ColumnHeader>Expertises</Table.ColumnHeader>
 									<Table.ColumnHeader>Actions</Table.ColumnHeader>
 								</Table.Row>
 							</Table.Header>
@@ -183,7 +197,9 @@ export default function DashboardAuthorPage() {
 								<Dialog.ActionTrigger asChild>
 									<Button variant="outline">Cancel</Button>
 								</Dialog.ActionTrigger>
-								<Button colorPalette="red">Delete</Button>
+								<Button colorPalette="red" onClick={handleClickDelete}>
+									Delete
+								</Button>
 							</Dialog.Footer>
 							<Dialog.CloseTrigger asChild>
 								<CloseButton size="sm" />

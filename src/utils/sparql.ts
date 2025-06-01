@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ENDPOINT } from "./constant";
+import { ENDPOINT, ENDPOINT_UPDATE } from "./constant";
 
 export const executeQuery = async (sparql: string) => {
 	try {
@@ -12,5 +12,21 @@ export const executeQuery = async (sparql: string) => {
 		return response.data;
 	} catch (error) {
 		return error;
+	}
+};
+
+export const executeUpdate = async (sparql: string) => {
+	try {
+		const response = await axios.post(ENDPOINT_UPDATE, sparql, {
+			headers: {
+				"Content-Type": "application/sparql-update",
+				Accept: "application/json",
+			},
+		});
+
+		console.log(response);
+		return response.status;
+	} catch (error) {
+		throw new Error(`SPARQL update failed: ${error}`);
 	}
 };
