@@ -1,6 +1,7 @@
 "use client";
 
 import { useGetAllAuthors } from "@/utils/hooks/useGetAllAuthors";
+import { Author } from "@/utils/interfaces/authors";
 import {
 	Avatar,
 	Box,
@@ -19,15 +20,26 @@ import {
 	Text,
 } from "@chakra-ui/react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Suspense, useState } from "react";
 import { FiEdit, FiEye, FiPlus, FiSearch, FiTrash2 } from "react-icons/fi";
 import { useDebouncedCallback } from "use-debounce";
 
 export default function DashboardAuthorPage() {
+	const [deleteAuthor, setDeleteAuthor] = useState<Author>();
 	const [localSearch, setLocalSearch] = useState("");
 	const [open, setOpen] = useState(false);
 
+	const router = useRouter();
+
 	const { data } = useGetAllAuthors({ department: "", expertise: "", name: localSearch });
+
+	console.log(data);
+
+	const handleClickEdit = (author: Author) => {
+		localStorage.setItem("author", JSON.stringify(author));
+		router.push(`/dashboard/author/edit/${author.id}`);
+	};
 
 	const debounced = useDebouncedCallback((value: string) => {
 		setLocalSearch(value);
@@ -111,7 +123,12 @@ export default function DashboardAuthorPage() {
 													<IconButton size="sm" variant="ghost" aria-label="View journal">
 														<FiEye />
 													</IconButton>
-													<IconButton size="sm" variant="ghost" aria-label="Edit journal">
+													<IconButton
+														onClick={() => handleClickEdit(author)}
+														size="sm"
+														variant="ghost"
+														aria-label="Edit journal"
+													>
 														<FiEdit />
 													</IconButton>
 													<IconButton
@@ -119,6 +136,10 @@ export default function DashboardAuthorPage() {
 														variant="ghost"
 														colorScheme="red"
 														aria-label="Delete journal"
+														onClick={() => {
+															setOpen(true);
+															setDeleteAuthor(author);
+														}}
 													>
 														<FiTrash2 />
 													</IconButton>
@@ -154,7 +175,7 @@ export default function DashboardAuthorPage() {
 							<Dialog.Body>
 								Are you sure you want to delete{" "}
 								<Text as="span" fontWeight="bold">
-									title
+									{deleteAuthor?.name}
 								</Text>
 								? This action cannot be undone.
 							</Dialog.Body>
