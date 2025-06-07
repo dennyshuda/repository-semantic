@@ -15,7 +15,7 @@ export const getArticleById = async (id: string) => {
     ?doi 
     ?keywords 
     ?publisher
-    (GROUP_CONCAT(DISTINCT CONCAT(?collaboratorName, "/", STR(?collaboratorId), "/", ?collaboratorMajor); separator=", ") AS ?collaborators)
+    (GROUP_CONCAT(DISTINCT CONCAT(?collaboratorName, "|", STR(?collaboratorId), "|", STR(?collaboratorMajor), "|", STR(?collaboratorImage)); separator=", ") AS ?collaborators)
     WHERE {
     ?article 
         journal:isArticleOf ?author ;
@@ -33,6 +33,7 @@ export const getArticleById = async (id: string) => {
     ?collaborator 
         journal:authorName ?collaboratorName ;
         journal:authorId ?collaboratorId;
+        journal:authorImage ?collaboratorImage;
         journal:hasMajor ?major.
 
     ?major 
@@ -47,7 +48,9 @@ export const getArticleById = async (id: string) => {
 
 	const binding = result.results.bindings[0];
 
-	const parsedCollaborators = parseCollaboratorsArticle(binding.collaborators.value);
+	const parsedCollaborators = binding?.collaborators?.value
+		? parseCollaboratorsArticle(binding.collaborators.value)
+		: [];
 
 	return {
 		article: {

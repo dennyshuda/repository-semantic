@@ -18,25 +18,46 @@ import {
 	Table,
 	Text,
 } from "@chakra-ui/react";
+import { Toaster, toaster } from "@/components/ui/toaster";
 import { useState } from "react";
 import { FiDownload, FiEdit, FiEye, FiPlus, FiSearch, FiTrash2 } from "react-icons/fi";
 import { useGetAllArticles } from "@/utils/hooks/useGetAllArticles";
 import { useDebouncedCallback } from "use-debounce";
+import { useQueryClient } from "@tanstack/react-query";
+import { Article } from "@/utils/interfaces/articles";
 
 export default function DashboardArticlePage() {
+	const [deleteArticle, setDeleteArticle] = useState<Article>();
+
 	const [localSearch, setLocalSearch] = useState("");
 	const [open, setOpen] = useState(false);
 
 	const { data } = useGetAllArticles({ query: localSearch });
 
-	console.log(data);
-
 	const debounced = useDebouncedCallback((value: string) => {
 		setLocalSearch(value);
 	}, 1000);
 
+	const queryClient = useQueryClient();
+
+	// const { mutate } = useMutation({
+	// 	mutationFn: deleteAuthorById,
+	// 	onSuccess: () => {
+	// 		queryClient.invalidateQueries({ queryKey: ["authors"] });
+	// 	},
+	// });
+
+	const handleClickDelete = async () => {
+		setOpen(false);
+		toaster.create({
+			title: "Successfully removed",
+			type: "success",
+		});
+	};
+
 	return (
 		<Box>
+			<Toaster />
 			<Flex justify="space-between" align="center" mb={6}>
 				<Box>
 					<Heading size="lg">Article Management</Heading>
@@ -138,7 +159,11 @@ export default function DashboardArticlePage() {
 													size="sm"
 													variant="ghost"
 													colorScheme="red"
-													aria-label="Delete journal"
+													aria-label="Delete Article"
+													onClick={() => {
+														setOpen(true);
+														setDeleteArticle(article);
+													}}
 												>
 													<FiTrash2 />
 												</IconButton>
@@ -174,15 +199,16 @@ export default function DashboardArticlePage() {
 							<Dialog.Body>
 								Are you sure you want to delete{" "}
 								<Text as="span" fontWeight="bold">
-									{/* {deleteArticle} */}
+									{deleteArticle?.title}
 								</Text>
-								? This action cannot be undone.
 							</Dialog.Body>
 							<Dialog.Footer>
 								<Dialog.ActionTrigger asChild>
 									<Button variant="outline">Cancel</Button>
 								</Dialog.ActionTrigger>
-								<Button colorPalette="red">Delete</Button>
+								<Button colorPalette="red" onClick={handleClickDelete}>
+									Delete
+								</Button>
 							</Dialog.Footer>
 							<Dialog.CloseTrigger asChild>
 								<CloseButton size="sm" />

@@ -5,6 +5,7 @@ export interface Article {
 	year: string;
 	authors: string;
 	publisher: string;
+	doi: string;
 }
 
 export interface ArticleResponse {

@@ -30,6 +30,7 @@ interface AuthorNetworkProps {
 	collaborators: {
 		id: string;
 		name: string;
+		image: string;
 	}[];
 }
 
@@ -39,12 +40,14 @@ const AuthorNetwork = ({ author, collaborators }: AuthorNetworkProps) => {
 	const graphData: GraphData = {
 		nodes: [
 			{ id: author.id, name: author.name, imageUrl: author.imageUrl, type: "main" },
-			...collaborators.map((c) => ({
-				id: c.id,
-				name: c.name,
-				imageUrl: "hai",
-				type: "collaborator",
-			})),
+			...collaborators
+				.filter((item) => item.id !== author.id)
+				.map((c) => ({
+					id: c.id,
+					name: c.name,
+					imageUrl: c.image,
+					type: "collaborator",
+				})),
 		],
 		links: collaborators?.map((c) => ({
 			source: author.id,

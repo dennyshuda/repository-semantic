@@ -71,7 +71,6 @@ export default async function ArticlePageId({ params }: { params: Promise<{ id: 
 						DOI: {data.article.doi}
 					</ChakraLink>
 				</Flex>
-
 				<Separator my={6} />
 
 				<Flex direction={{ base: "column", md: "row" }} gap={6} mb={8}>
@@ -81,11 +80,11 @@ export default async function ArticlePageId({ params }: { params: Promise<{ id: 
 						</Heading>
 
 						<Flex wrap="wrap" gap={2} mb={6}>
-							{data.article.collaborators.map((author) => (
+							{data.article.collaborators?.map((author) => (
 								<Flex key={author.id} align="center" mr={4} mb={2}>
 									<Avatar.Root size="sm" mr={2} borderColor="blue.200">
 										<Avatar.Fallback name={author.name} />
-										<Avatar.Image src="example.com" />
+										<Avatar.Image src={author.image} />
 									</Avatar.Root>
 
 									<Box>
@@ -99,7 +98,7 @@ export default async function ArticlePageId({ params }: { params: Promise<{ id: 
 						</Flex>
 
 						<Flex wrap="wrap" gap={2} mb={6}>
-							{data?.article.keywords.split(",").map((keyword: string) => (
+							{data?.article?.keywords?.split(",").map((keyword: string) => (
 								<Tag.Root key={keyword} colorScheme="blue" size="md" textTransform="capitalize">
 									<Tag.Label>{keyword}</Tag.Label>
 								</Tag.Root>
@@ -109,7 +108,7 @@ export default async function ArticlePageId({ params }: { params: Promise<{ id: 
 						<HStack>
 							<Button>
 								<FaFileAlt />
-								<ChakraLink href={data?.article.doi} target="_blank" color="white">
+								<ChakraLink href={data.article.doi} target="_blank" color="white">
 									Link Full Text
 								</ChakraLink>
 							</Button>
@@ -143,13 +142,6 @@ export default async function ArticlePageId({ params }: { params: Promise<{ id: 
 					>
 						{data?.article.abstract}
 					</Box>
-				</Box>
-
-				<Box mb={8}>
-					<Heading as="h2" size="lg" mb={4}>
-						PDF Preview
-					</Heading>
-					<iframe src={data.article.url} width="100%" height="500px"></iframe>
 				</Box>
 
 				<Separator my={8} />

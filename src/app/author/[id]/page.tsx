@@ -22,6 +22,8 @@ export default async function AuthorPageId({ params }: { params: Promise<{ id: s
 
 	const data = await getAuthorById(id);
 
+	console.log(data);
+
 	return (
 		<Box as="main">
 			<Suspense fallback={<p>loading</p>}>
@@ -46,7 +48,7 @@ export default async function AuthorPageId({ params }: { params: Promise<{ id: s
 						<Flex direction={["column", "row"]} gap={8} paddingY="5">
 							<Avatar.Root size="2xl" borderWidth="3px" borderColor="blue.200">
 								<Avatar.Fallback name={data?.author?.name} />
-								<Avatar.Image src="{sampleAuthor.photoUrl}" />
+								<Avatar.Image src={data.author.image} />
 							</Avatar.Root>
 
 							<Box flex="1">
@@ -134,7 +136,7 @@ export default async function AuthorPageId({ params }: { params: Promise<{ id: s
 								author={{
 									id: data.author.id,
 									name: data.author.name,
-									imageUrl: "",
+									imageUrl: data.author.image,
 								}}
 								collaborators={data.author.collaborators}
 							/>

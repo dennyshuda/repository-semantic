@@ -9,9 +9,11 @@ export const executeQuery = async (sparql: string) => {
 				Accept: "application/sparql-results+json",
 			},
 		});
+
 		return response.data;
 	} catch (error) {
-		return error;
+		console.error("Error fetching data:", error);
+		throw error;
 	}
 };
 
