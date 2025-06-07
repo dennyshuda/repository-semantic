@@ -21,7 +21,8 @@
 		"react-hook-form": "^7.56.4",
 		"react-icons": "^5.5.0",
 		"react-slugify": "^4.0.1",
-		"use-debounce": "^10.0.4"
+		"use-debounce": "^10.0.4",
+		"uuid": "^11.1.0"
 	},
 	"devDependencies": {
 		"@eslint/eslintrc": "^3",
