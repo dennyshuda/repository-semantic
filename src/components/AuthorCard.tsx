@@ -36,7 +36,7 @@ export function AuthorCard({ author }: AuthorCardProps) {
 
 				<Stack gap={2}>
 					<Text fontWeight={600}>Expertise</Text>
-					<Text color={"gray.500"}>{author.expertises}</Text>
+					<Text color={"gray.500"}>{author.expertises.toString()}</Text>
 				</Stack>
 			</Box>
 		</Link>

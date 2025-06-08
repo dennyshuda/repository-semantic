@@ -1,6 +1,6 @@
-import EditForm from "@/app/dashboard/article/edit/_components/EditForm";
 import { getArticleById } from "@/utils/actions/articles/get-article-id";
 import { Box, Heading } from "@chakra-ui/react";
+import ArticleEditForm from "@/app/dashboard/article/edit/_components/ArticleEditForm";
 
 export default async function DashboardEditArticlePage({
 	params,
@@ -17,7 +17,7 @@ export default async function DashboardEditArticlePage({
 				Edit Article {id}
 			</Heading>
 
-			<EditForm article={data.article} />
+			<ArticleEditForm article={data.article} />
 		</Box>
 	);
 }
