@@ -14,7 +14,11 @@ export const getAllArticles = async ({ query }: UseGetAllAuthorsProps) => {
     ?abstract 
     ?year
     ?publisher
+    ?doi
+    ?keywords
+    ?url
     (GROUP_CONCAT(?articleAuthor; separator=", ") AS ?authors)
+    (GROUP_CONCAT(?articleAuthorId; separator=", ") AS ?authorsId)
     WHERE {
     ?journal 
         journal:articleTitle ?title;
@@ -22,12 +26,16 @@ export const getAllArticles = async ({ query }: UseGetAllAuthorsProps) => {
         journal:articleAbstract ?abstract;
         journal:articlePublisher ?publisher;
         journal:articleYear ?year;
+        journal:articleDoi ?doi;
+        journal:articleKeyword ?keywords;
+        journal:articleUrl ?url;
         journal:isArticleOf ?author.
     ?author 
-        journal:authorName ?articleAuthor.
+        journal:authorName ?articleAuthor;
+        journal:authorId ?articleAuthorId.
     FILTER (REGEX(STR(?title), "${query ? query : ""}", "i"))
     }
-    GROUP BY ?title ?id ?abstract ?year ?publisher
+    GROUP BY ?title ?id ?abstract ?year ?publisher ?doi ?keywords ?url
     `;
 
 	const result = await executeQuery(sparqlQuery);
@@ -38,7 +46,11 @@ export const getAllArticles = async ({ query }: UseGetAllAuthorsProps) => {
 		authors: binding.authors.value,
 		publisher: binding.publisher.value,
 		abstract: binding.abstract.value,
+		doi: binding.doi.value,
 		year: binding.year.value,
+		url: binding.url.value,
+		keywords: binding.keywords.value,
+		authorId: binding.authorsId.value,
 	}));
 
 	return {

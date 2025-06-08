@@ -1,6 +1,9 @@
 "use client";
 
-import Link from "next/link";
+import { Toaster, toaster } from "@/components/ui/toaster";
+import { deleteArticleById } from "@/utils/actions/articles/delete-article-id";
+import { useGetAllArticles } from "@/utils/hooks/useGetAllArticles";
+import { Article } from "@/utils/interfaces/articles";
 import {
 	Box,
 	Button,
@@ -13,20 +16,20 @@ import {
 	IconButton,
 	Input,
 	InputGroup,
-	Menu,
 	Portal,
 	Table,
 	Text,
 } from "@chakra-ui/react";
-import { Toaster, toaster } from "@/components/ui/toaster";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { FiDownload, FiEdit, FiEye, FiPlus, FiSearch, FiTrash2 } from "react-icons/fi";
-import { useGetAllArticles } from "@/utils/hooks/useGetAllArticles";
+import { FiEdit, FiEye, FiPlus, FiSearch, FiTrash2 } from "react-icons/fi";
 import { useDebouncedCallback } from "use-debounce";
-import { useQueryClient } from "@tanstack/react-query";
-import { Article } from "@/utils/interfaces/articles";
 
 export default function DashboardArticlePage() {
+	const router = useRouter();
+
 	const [deleteArticle, setDeleteArticle] = useState<Article>();
 
 	const [localSearch, setLocalSearch] = useState("");
@@ -40,19 +43,25 @@ export default function DashboardArticlePage() {
 
 	const queryClient = useQueryClient();
 
-	// const { mutate } = useMutation({
-	// 	mutationFn: deleteAuthorById,
-	// 	onSuccess: () => {
-	// 		queryClient.invalidateQueries({ queryKey: ["authors"] });
-	// 	},
-	// });
+	const { mutate } = useMutation({
+		mutationFn: deleteArticleById,
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["articles"] });
+			toaster.create({
+				title: "Successfully removed",
+				type: "success",
+			});
+		},
+	});
 
 	const handleClickDelete = async () => {
+		mutate({ id: deleteArticle!.id });
 		setOpen(false);
-		toaster.create({
-			title: "Successfully removed",
-			type: "success",
-		});
+	};
+
+	const handleClickEdit = (article: Article) => {
+		localStorage.setItem("article", JSON.stringify(article));
+		router.push(`/dashboard/article/edit/${article.id}`);
 	};
 
 	return (
@@ -81,26 +90,6 @@ export default function DashboardArticlePage() {
 									onChange={(e) => debounced(e.target.value)}
 								/>
 							</InputGroup>
-						</HStack>
-
-						<HStack>
-							<Menu.Root>
-								<Menu.Trigger asChild>
-									<Button variant="outline" size="sm">
-										<FiDownload />
-										Export
-									</Button>
-								</Menu.Trigger>
-								<Portal>
-									<Menu.Positioner>
-										<Menu.Content>
-											<Menu.Item value="csv">Export as CSV</Menu.Item>
-											<Menu.Item value="pdf">Export as PDF</Menu.Item>
-											<Menu.Item value="list">Export contact list</Menu.Item>
-										</Menu.Content>
-									</Menu.Positioner>
-								</Portal>
-							</Menu.Root>
 						</HStack>
 					</Flex>
 
@@ -152,7 +141,12 @@ export default function DashboardArticlePage() {
 														<FiEye />
 													</IconButton>
 												</Link>
-												<IconButton size="sm" variant="ghost" aria-label="Edit journal">
+												<IconButton
+													size="sm"
+													variant="ghost"
+													aria-label="Edit journal"
+													onClick={() => handleClickEdit(article)}
+												>
 													<FiEdit />
 												</IconButton>
 												<IconButton

@@ -36,7 +36,7 @@ export default async function ArticlePageId({ params }: { params: Promise<{ id: 
 						</Breadcrumb.Item>
 						<Breadcrumb.Separator />
 						<Breadcrumb.Item fontSize="sm">
-							<Link href={data.article.id}>{data.article.id}</Link>
+							<Link href={data.article.id}>Details</Link>
 						</Breadcrumb.Item>
 					</Breadcrumb.List>
 				</Breadcrumb.Root>

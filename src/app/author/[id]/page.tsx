@@ -39,7 +39,7 @@ export default async function AuthorPageId({ params }: { params: Promise<{ id: s
 							</Breadcrumb.Item>
 							<Breadcrumb.Separator />
 							<Breadcrumb.CurrentLink>
-								<Link href={data.author.id}>{data.author.name}</Link>
+								<Link href={data?.author.id}>Details</Link>
 							</Breadcrumb.CurrentLink>
 						</Breadcrumb.List>
 					</Breadcrumb.Root>
@@ -92,7 +92,7 @@ export default async function AuthorPageId({ params }: { params: Promise<{ id: s
 
 					<Box mb={8}>
 						<Heading as="h2" size="lg" mb={4}>
-							Publications ({data?.author?.articles.length ?? 0})
+							Articles ({data?.author?.articles.length ?? 0})
 						</Heading>
 
 						<Box overflowX="auto">

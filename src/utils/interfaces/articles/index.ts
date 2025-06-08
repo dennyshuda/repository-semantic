@@ -6,6 +6,9 @@ export interface Article {
 	authors: string;
 	publisher: string;
 	doi: string;
+	keywords: string;
+	url: string;
+	authorId: string;
 }
 
 export interface ArticleResponse {
