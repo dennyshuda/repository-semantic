@@ -16,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import { Controller, useForm } from "react-hook-form";
-import slugify from "react-slugify";
+import { v4 as uuidv4 } from "uuid";
 
 export interface CreateAuthorFormValues {
 	name: string;
@@ -37,7 +37,7 @@ export default function DashboardCreateAuthorPage() {
 	} = useForm<CreateAuthorFormValues>();
 
 	const onSubmit = async (data: CreateAuthorFormValues) => {
-		const authorId = slugify(data.name);
+		const authorId = uuidv4();
 
 		const sparqlQuery = `
 		PREFIX journal: ${IRI}
