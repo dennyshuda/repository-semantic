@@ -34,7 +34,7 @@ export interface EditArticleFormValues {
 	authorId: string[];
 }
 
-export default function EditForm({ article }: EditFormProps) {
+export default function ArticleEditForm({ article }: EditFormProps) {
 	const router = useRouter();
 	const { data } = useGetAllAuthors({ department: "", expertise: "", name: "" });
 
