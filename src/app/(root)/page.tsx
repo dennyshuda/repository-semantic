@@ -65,7 +65,7 @@ export default async function Home() {
 								size="lg"
 								w="full"
 								borderRadius="full"
-								placeholder="Search author's name"
+								placeholder="Input your keywords "
 								_placeholder={{ color: "white" }}
 							/>
 						</InputGroup>

@@ -26,7 +26,6 @@ export const executeUpdate = async (sparql: string) => {
 			},
 		});
 
-		console.log(response);
 		return response.status;
 	} catch (error) {
 		throw new Error(`SPARQL update failed: ${error}`);

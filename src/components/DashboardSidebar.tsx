@@ -1,7 +1,7 @@
 import { Avatar, Badge, Box, Flex, HStack, Icon, Separator, Text, VStack } from "@chakra-ui/react";
 import Link from "next/link";
 import { IconType } from "react-icons";
-import { FiBook, FiHome, FiLogOut, FiPlusCircle, FiSearch, FiUsers } from "react-icons/fi";
+import { FiBook, FiHome, FiLogOut, FiPlusCircle, FiUsers } from "react-icons/fi";
 
 const LinkItems = [
 	{ name: "Dashboard", icon: FiHome, href: "/dashboard" },
@@ -9,7 +9,6 @@ const LinkItems = [
 	{ name: "Add Article", icon: FiPlusCircle, href: "/dashboard/article/create", indent: true },
 	{ name: "Authors", icon: FiUsers, href: "/dashboard/author" },
 	{ name: "Add Author", icon: FiPlusCircle, href: "/dashboard/author/create", indent: true },
-	{ name: "Search", icon: FiSearch, href: "/dashboard" },
 ];
 
 interface NavItemProps {

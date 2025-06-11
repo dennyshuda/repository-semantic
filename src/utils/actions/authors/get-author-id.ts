@@ -14,7 +14,9 @@ export const getAuthorById = async (id: string) => {
     ?image
     ?department
     (GROUP_CONCAT(DISTINCT CONCAT(?articleTitle, "|", STR(?articleId), "|", STR(?articleYear)); separator=", ") AS ?articles)
-    (GROUP_CONCAT(DISTINCT ?expertiseName; separator=", ") AS ?expertises)
+    (GROUP_CONCAT(DISTINCT ?expertiseName; separator=",") AS ?expertises)
+    (GROUP_CONCAT(DISTINCT ?expertiseId; separator=",") AS ?expertisesId)
+    (GROUP_CONCAT(DISTINCT ?departmentId; separator=", ") AS ?departmentsId)
     (GROUP_CONCAT(DISTINCT CONCAT(?collaboratorName, "|", STR(?collaboratorId), "|", STR(?collaboratorImage) ); separator=", ") AS ?collaborators)
     WHERE {
     ?author 
@@ -27,10 +29,12 @@ export const getAuthorById = async (id: string) => {
         journal:hasExpertise ?expertise .
 
     ?major
-        journal:majorName ?department.
+        journal:majorName ?department;
+        journal:majorId ?departmentId.
 
     ?expertise 
-        journal:expertiseName ?expertiseName .
+        journal:expertiseName ?expertiseName ;
+        journal:expertiseId ?expertiseId .
 
     OPTIONAL {
     ?author 
@@ -72,7 +76,9 @@ export const getAuthorById = async (id: string) => {
 			nip: binding?.nip.value,
 			department: binding?.department.value,
 			email: binding?.email.value,
-			expertises: binding?.expertises.value.split(", "),
+			expertises: binding?.expertises.value.split(","),
+			expertisesId: binding?.expertisesId.value.split(","),
+			departmentId: binding?.departmentsId.value,
 			articles: parsedArticles,
 			collaborators: parsedCollaborators,
 		},

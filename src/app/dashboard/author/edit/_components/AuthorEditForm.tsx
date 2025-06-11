@@ -6,7 +6,6 @@ import {
 	Button,
 	createListCollection,
 	Field,
-	Heading,
 	HStack,
 	Input,
 	Portal,
@@ -37,6 +36,9 @@ interface Author {
 	departmentId: string;
 	expertises: string[];
 	expertisesId: string[];
+	articles: {
+		id: string;
+	}[];
 }
 
 interface AuthorEditFormProps {
@@ -44,6 +46,8 @@ interface AuthorEditFormProps {
 }
 
 export default function AuthorEditForm({ author }: AuthorEditFormProps) {
+	console.log(author);
+
 	const router = useRouter();
 	const {
 		register,
@@ -51,52 +55,60 @@ export default function AuthorEditForm({ author }: AuthorEditFormProps) {
 		reset,
 		handleSubmit,
 		formState: {},
-	} = useForm<EditAuthorFormValues>();
+	} = useForm<EditAuthorFormValues>({
+		defaultValues: {
+			name: author.name,
+			nip: Number(author.nip),
+			image: author.image,
+			email: author.email,
+			departmentId: [author.departmentId],
+			expertisesId: author.expertisesId,
+		},
+	});
 
 	const onSubmit = async (data: EditAuthorFormValues) => {
-		const newAuthor = {
-			id: author.id,
-			name: data.name ? data.name : author.name,
-			email: data.email ? data.email : author.email,
-			nip: data.nip ? data.nip : author.nip,
-			image: data.image ? data.image : author.image,
-			department: data.departmentId ? data.departmentId[0] : author.departmentId,
-			expertisesId:
-				data.expertisesId && data.expertisesId.length !== 0
-					? data.expertisesId
-					: author.expertisesId,
-		};
-
-		console.log(newAuthor);
-
 		const sparqlQuery = `
         PREFIX journal: ${IRI}
         PREFIX rdf: <http:www.w3.org/1999/02/22-rdf-syntax-ns#>
 
-        DELETE { journal:${newAuthor.id} ?p ?o }
+        DELETE { 
+            journal:${author.id} ?p ?o.
+            ?author journal:hasArticle journal:${author.id} .
+            journal:${author.id} journal:isArticleOf ?author .
+        }
 
         INSERT {
-            journal:${newAuthor.id} rdf:type journal:newAuthor;
-            journal:authorId "${newAuthor.id}";
-            journal:authorName "${newAuthor.name}";
-            journal:authorImage  "${newAuthor.image}";
-            journal:authorNip ${newAuthor.nip};
-            journal:authorEmail  "${newAuthor.email}".
+            journal:${author.id} rdf:type journal:Author;
+            journal:authorId "${author.id}";
+            journal:authorName "${data.name}";
+            journal:authorImage  "${data.image}";
+            journal:authorNip ${data.nip};
+            journal:authorEmail  "${data.email}".
 
-            journal:${newAuthor.id} journal:hasMajor journal:${newAuthor.department}.
-            journal:${newAuthor.department} journal:isMajorOf journal:${newAuthor.id}.
+            journal:${author.id} journal:hasMajor journal:${data.departmentId[0]}.
+            journal:${data.departmentId[0]} journal:isMajorOf journal:${author.id}.
 
-            ${newAuthor.expertisesId
-							.map((id: string) => `journal:${newAuthor.id} journal:hasExpertise journal:${id} .`)
+            ${data.expertisesId
+							.map((id: string) => `journal:${author.id} journal:hasExpertise journal:${id} .`)
 							.join("\n")}
 
-            ${newAuthor.expertisesId
-							.map((id: string) => `journal:${id} journal:isExpertiseOf journal:${newAuthor.id} .`)
+            ${data.expertisesId
+							.map((id: string) => `journal:${id} journal:isExpertiseOf journal:${author.id} .`)
+							.join("\n")}
+
+            ${author.articles
+							.map((a) => `journal:${a.id} journal:isArticleOf journal:${author.id} .`)
+							.join("\n")}
+
+            ${author.articles
+							.map((a) => `journal:${author.id} journal:hasArticle journal:${a.id} .`)
 							.join("\n")}
         }
 
         WHERE  {
-            journal:${newAuthor.id} ?p ?o .
+            journal:${author.id} ?p ?o .
+            OPTIONAL { ?author journal:hasArticle journal:${author.id} . }
+            OPTIONAL { journal:${author.id} journal:isArticleOf ?author . }
         }
 		`;
 
@@ -139,132 +151,120 @@ export default function AuthorEditForm({ author }: AuthorEditFormProps) {
 	});
 
 	return (
-		<Box>
-			<Heading size="lg" mb={6}>
-				Edit Author
-			</Heading>
+		<Box p={6} borderRadius="lg" boxShadow="sm" borderWidth="1px">
+			<form onSubmit={handleSubmit(onSubmit)}>
+				<VStack gap={6} align="stretch">
+					<Field.Root>
+						<Field.Label>Full Name</Field.Label>
+						<Input placeholder="Enter author's full name" {...register("name")} />
+					</Field.Root>
 
-			<Box p={6} borderRadius="lg" boxShadow="sm" borderWidth="1px">
-				<form onSubmit={handleSubmit(onSubmit)}>
-					<VStack gap={6} align="stretch">
+					<Field.Root>
+						<Field.Label>Photo (URL)</Field.Label>
+						<Input placeholder="Enter photo's" {...register("image")} />
+					</Field.Root>
+
+					<SimpleGrid columns={{ base: 1, md: 2 }} gap={6}>
 						<Field.Root>
-							<Field.Label>Full Name</Field.Label>
-							<Field.HelperText>Current: {author.name}</Field.HelperText>
-							<Input placeholder="Enter author's full name" {...register("name")} />
+							<Field.Label>Email</Field.Label>
+							<Input type="email" placeholder="Enter author's email" {...register("email")} />
 						</Field.Root>
 
 						<Field.Root>
-							<Field.Label>Photo (URL)</Field.Label>
-							<Field.HelperText>Current: {author.image}</Field.HelperText>
-							<Input placeholder="Enter photo's" {...register("image")} />
+							<Field.Label>Nip</Field.Label>
+							<Input type="number" placeholder="Enter author's nip" {...register("nip")} />
+						</Field.Root>
+					</SimpleGrid>
+
+					<SimpleGrid columns={{ base: 1, md: 2 }} gap={6}>
+						<Field.Root>
+							<Field.Label>Department</Field.Label>
+							<Controller
+								control={control}
+								name="departmentId"
+								render={({ field }) => (
+									<Select.Root
+										name={field.name}
+										value={field.value}
+										onValueChange={({ value }) => field.onChange(value)}
+										onInteractOutside={() => field.onBlur()}
+										collection={departmentList}
+									>
+										<Select.HiddenSelect />
+										<Select.Control>
+											<Select.Trigger>
+												<Select.ValueText placeholder="Select departments" />
+											</Select.Trigger>
+											<Select.IndicatorGroup>
+												<Select.Indicator />
+											</Select.IndicatorGroup>
+										</Select.Control>
+										<Portal>
+											<Select.Positioner>
+												<Select.Content>
+													{departmentList.items.map((item) => (
+														<Select.Item item={item} key={item.value}>
+															{item.label}
+															<Select.ItemIndicator />
+														</Select.Item>
+													))}
+												</Select.Content>
+											</Select.Positioner>
+										</Portal>
+									</Select.Root>
+								)}
+							/>
 						</Field.Root>
 
-						<SimpleGrid columns={{ base: 1, md: 2 }} gap={6}>
-							<Field.Root>
-								<Field.Label>Email</Field.Label>
-								<Field.HelperText>Current: {author.email}</Field.HelperText>
-								<Input type="email" placeholder="Enter author's email" {...register("email")} />
-							</Field.Root>
+						<Field.Root>
+							<Field.Label>Expertises </Field.Label>
+							<Controller
+								control={control}
+								name="expertisesId"
+								render={({ field }) => (
+									<Select.Root
+										multiple
+										name={field.name}
+										value={field.value}
+										onValueChange={({ value }) => field.onChange(value)}
+										onInteractOutside={() => field.onBlur()}
+										collection={expertiseList}
+									>
+										<Select.HiddenSelect />
+										<Select.Control>
+											<Select.Trigger>
+												<Select.ValueText placeholder="Select expertises" />
+											</Select.Trigger>
+											<Select.IndicatorGroup>
+												<Select.Indicator />
+											</Select.IndicatorGroup>
+										</Select.Control>
+										<Portal>
+											<Select.Positioner>
+												<Select.Content>
+													{expertiseList.items.map((item) => (
+														<Select.Item item={item} key={item.value}>
+															{item.label}
+															<Select.ItemIndicator />
+														</Select.Item>
+													))}
+												</Select.Content>
+											</Select.Positioner>
+										</Portal>
+									</Select.Root>
+								)}
+							/>
+						</Field.Root>
+					</SimpleGrid>
 
-							<Field.Root>
-								<Field.Label>Nip</Field.Label>
-								<Field.HelperText>Current: {author.nip}</Field.HelperText>
-								<Input type="number" placeholder="Enter author's nip" {...register("nip")} />
-							</Field.Root>
-						</SimpleGrid>
-
-						<SimpleGrid columns={{ base: 1, md: 2 }} gap={6}>
-							<Field.Root>
-								<Field.Label>Department</Field.Label>
-								<Field.HelperText>Current: {author.department}</Field.HelperText>
-								<Controller
-									control={control}
-									name="departmentId"
-									render={({ field }) => (
-										<Select.Root
-											name={field.name}
-											value={field.value}
-											onValueChange={({ value }) => field.onChange(value)}
-											onInteractOutside={() => field.onBlur()}
-											collection={departmentList}
-										>
-											<Select.HiddenSelect />
-											<Select.Control>
-												<Select.Trigger>
-													<Select.ValueText placeholder="Select departments" />
-												</Select.Trigger>
-												<Select.IndicatorGroup>
-													<Select.Indicator />
-												</Select.IndicatorGroup>
-											</Select.Control>
-											<Portal>
-												<Select.Positioner>
-													<Select.Content>
-														{departmentList.items.map((item) => (
-															<Select.Item item={item} key={item.value}>
-																{item.label}
-																<Select.ItemIndicator />
-															</Select.Item>
-														))}
-													</Select.Content>
-												</Select.Positioner>
-											</Portal>
-										</Select.Root>
-									)}
-								/>
-							</Field.Root>
-
-							<Field.Root>
-								<Field.Label>Expertises </Field.Label>
-								<Field.HelperText>Current: {author.expertises.toString()}</Field.HelperText>
-								<Controller
-									control={control}
-									name="expertisesId"
-									render={({ field }) => (
-										<Select.Root
-											multiple
-											name={field.name}
-											value={field.value}
-											onValueChange={({ value }) => field.onChange(value)}
-											onInteractOutside={() => field.onBlur()}
-											collection={expertiseList}
-										>
-											<Select.HiddenSelect />
-											<Select.Control>
-												<Select.Trigger>
-													<Select.ValueText placeholder="Select expertises" />
-												</Select.Trigger>
-												<Select.IndicatorGroup>
-													<Select.Indicator />
-												</Select.IndicatorGroup>
-											</Select.Control>
-											<Portal>
-												<Select.Positioner>
-													<Select.Content>
-														{expertiseList.items.map((item) => (
-															<Select.Item item={item} key={item.value}>
-																{item.label}
-																<Select.ItemIndicator />
-															</Select.Item>
-														))}
-													</Select.Content>
-												</Select.Positioner>
-											</Portal>
-										</Select.Root>
-									)}
-								/>
-							</Field.Root>
-						</SimpleGrid>
-
-						<HStack justify="flex-end" gap={4} pt={4}>
-							<Button variant="outline">Cancel</Button>
-							<Button type="submit" colorScheme="primary" loadingText="Adding...">
-								Add Author
-							</Button>
-						</HStack>
-					</VStack>
-				</form>
-			</Box>
+					<HStack justify="flex-end" gap={4} pt={4}>
+						<Button variant="outline">Cancel</Button>
+						<Button type="submit" colorScheme="primary" loadingText="Adding...">
+							Update Author
+						</Button>
+					</HStack>
+				</VStack>
+			</form>
 		</Box>
 	);
 }

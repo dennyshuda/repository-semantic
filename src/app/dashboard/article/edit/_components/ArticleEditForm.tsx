@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { ENDPOINT_UPDATE, IRI } from "@/utils/constant";
@@ -52,57 +51,54 @@ export default function ArticleEditForm({ article }: EditFormProps) {
 		reset,
 		handleSubmit,
 		formState: {},
-	} = useForm<EditArticleFormValues>();
+	} = useForm<EditArticleFormValues>({
+		defaultValues: {
+			title: article.title,
+			year: Number(article.year),
+			authorId: article.collaborators.map((a) => a.id),
+			url: article.url,
+			doi: article.doi,
+			publisher: article.publisher,
+			keywords: article.keywords,
+			abstract: article.abstract,
+		},
+	});
 
 	const onSubmit = async (data: EditArticleFormValues) => {
-		const newArticle = {
-			id: article.id,
-			title: data.title ? data.title : article.title,
-			abstract: data.abstract ? data.abstract : article.abstract,
-			year: data.year ? data.year : article.year,
-			url: data.url ? data.url : article.url,
-			doi: data.doi ? data.doi : article.doi,
-			publisher: data.publisher ? data.publisher : article.publisher,
-			keywords: data.keywords ? data.keywords : article.keywords,
-			authorId:
-				data.authorId && data.authorId.length !== 0
-					? data.authorId
-					: article.collaborators.map((a) => a.id),
-		};
+		console.log(data);
 
 		const sparqlQuery = `
         PREFIX journal: ${IRI}
         PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 
         DELETE {
-            journal:${newArticle.id} ?p ?o .
-            ?author journal:hasArticle journal:${newArticle.id} .
-            journal:${newArticle.id} journal:isArticleOf ?author .
+            journal:${article.id} ?p ?o .
+            ?author journal:hasArticle journal:${article.id} .
+            journal:${article.id} journal:isArticleOf ?author .
         }
         INSERT {
-            journal:${newArticle.id} rdf:type journal:Publication;
-            journal:articleId "${newArticle.id}";
-            journal:articleTitle "${newArticle.title}";
-            journal:articleAbstract "${newArticle.abstract}";
-            journal:articleYear ${newArticle.year};
-            journal:articleUrl "${newArticle.url}";
-            journal:articleDoi "${newArticle.doi}";
-            journal:articlePublisher "${newArticle.publisher}";
-            journal:articleKeyword "${newArticle.keywords}".
+            journal:${article.id} rdf:type journal:Publication;
+            journal:articleId "${article.id}";
+            journal:articleTitle "${data.title}";
+            journal:articleAbstract "${data.abstract}";
+            journal:articleYear ${data.year};
+            journal:articleUrl "${data.url}";
+            journal:articleDoi "${data.doi}";
+            journal:articlePublisher "${data.publisher}";
+            journal:articleKeyword "${data.keywords}".
 
-            ${newArticle.authorId
-							.map((id: string) => `journal:${newArticle.id} journal:isArticleOf journal:${id} .`)
+            ${data.authorId
+							.map((id: string) => `journal:${article.id} journal:isArticleOf journal:${id} .`)
 							.join("\n")}
-            ${newArticle.authorId
-							.map((id: string) => `journal:${id} journal:hasArticle journal:${newArticle.id} .`)
+            ${data.authorId
+							.map((id: string) => `journal:${id} journal:hasArticle journal:${article.id} .`)
 							.join("\n")}
         }
         WHERE {
-            journal:${newArticle.id} ?p ?o .
-            OPTIONAL { ?author journal:hasArticle journal:${newArticle.id} . }
-            OPTIONAL { journal:${newArticle.id} journal:isArticleOf ?author . }
+            journal:${article.id} ?p ?o .
+            OPTIONAL { ?author journal:hasArticle journal:${article.id} . }
+            OPTIONAL { journal:${article.id} journal:isArticleOf ?author . }
         }
-        
         `;
 
 		try {
@@ -114,6 +110,7 @@ export default function ArticleEditForm({ article }: EditFormProps) {
 			});
 			router.push("/dashboard/article");
 			return response;
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch (error: any) {
 			console.log(error);
 			throw new Error("error", error);
@@ -130,21 +127,16 @@ export default function ArticleEditForm({ article }: EditFormProps) {
 				<VStack gap={6} align="stretch">
 					<Field.Root>
 						<Field.Label>Title </Field.Label>
-						<Field.HelperText>Current: {article.title} </Field.HelperText>
 						<Input placeholder="Enter title" {...register("title")} />
 					</Field.Root>
 
 					<SimpleGrid columns={{ base: 1, md: 2 }} gap={6}>
 						<Field.Root>
 							<Field.Label>Year</Field.Label>
-							<Field.HelperText>Current: {article.year}</Field.HelperText>
 							<Input placeholder="Enter year" type="number" {...register("year")} />
 						</Field.Root>
 						<Field.Root>
 							<Field.Label>Authors</Field.Label>
-							<Field.HelperText>
-								Current: {article.collaborators.map((a) => a.name).toString()}
-							</Field.HelperText>
 							<Controller
 								control={control}
 								name="authorId"
@@ -187,13 +179,11 @@ export default function ArticleEditForm({ article }: EditFormProps) {
 					<SimpleGrid columns={{ base: 1, md: 2 }} gap={6}>
 						<Field.Root>
 							<Field.Label>URL</Field.Label>
-							<Field.HelperText>Current: {article.url}</Field.HelperText>
 							<Input placeholder="Enter URL" {...register("url")} />
 						</Field.Root>
 
 						<Field.Root>
 							<Field.Label>DOI</Field.Label>
-							<Field.HelperText>Current: {article.doi}</Field.HelperText>
 							<Input placeholder="Enter DOI" {...register("doi")} />
 						</Field.Root>
 					</SimpleGrid>
@@ -201,20 +191,17 @@ export default function ArticleEditForm({ article }: EditFormProps) {
 					<SimpleGrid columns={{ base: 1, md: 2 }} gap={6}>
 						<Field.Root>
 							<Field.Label>Publisher</Field.Label>
-							<Field.HelperText>Current: {article.publisher}</Field.HelperText>
 							<Input placeholder="Enter Publisher" {...register("publisher")} />
 						</Field.Root>
 
 						<Field.Root>
 							<Field.Label>Keywords</Field.Label>
-							<Field.HelperText>Current: {article.keywords}</Field.HelperText>
 							<Input placeholder="Enter Keywords" {...register("keywords")} />
 						</Field.Root>
 					</SimpleGrid>
 
 					<Field.Root>
 						<Field.Label>Abstract</Field.Label>
-						<Field.HelperText textAlign="justify">Current: {article.abstract}</Field.HelperText>
 						<Separator />
 						<Textarea size="xl" placeholder="abstract" autoresize {...register("abstract")} />
 					</Field.Root>
