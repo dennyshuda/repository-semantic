@@ -1,0 +1,84 @@
+"use client";
+
+import { useToggle } from "@/hooks/useToggle";
+import { signin } from "@/utils/actions/auth";
+import { Box, Button, Field, IconButton, Input, InputGroup, Stack } from "@chakra-ui/react";
+import { useForm } from "react-hook-form";
+import { BiHide, BiShow } from "react-icons/bi";
+
+export interface LoginForm {
+	nip: string;
+	password: string;
+}
+
+export default function LoginForm() {
+	const { value, toggle } = useToggle();
+
+	const { register, reset, handleSubmit } = useForm<LoginForm>();
+
+	const onSubmit = async (data: LoginForm) => {
+		console.log(data);
+
+		const a = await signin(data);
+
+		if (a.status === 200) {
+			alert("login sucess");
+		} else {
+			alert("Invalid credential");
+		}
+
+		reset();
+	};
+
+	return (
+		<Box rounded={"lg"} boxShadow={"lg"} p={8} width={{ base: "xs", sm: "sm" }}>
+			<form onSubmit={handleSubmit(onSubmit)}>
+				<Stack gap={4}>
+					<Field.Root required>
+						<Field.Label>
+							NIP <Field.RequiredIndicator />
+						</Field.Label>
+						<Input placeholder="123456789" {...register("nip")} />
+					</Field.Root>
+					<Field.Root required>
+						<Field.Label>
+							Password <Field.RequiredIndicator />
+						</Field.Label>
+						<InputGroup
+							endElement={
+								value ? (
+									<IconButton variant="ghost" rounded="full" onClick={toggle}>
+										<BiShow />
+									</IconButton>
+								) : (
+									<IconButton variant="ghost" rounded="full" onClick={toggle}>
+										<BiHide />
+									</IconButton>
+								)
+							}
+						>
+							<Input
+								placeholder="********"
+								type={value ? "text" : "password"}
+								{...register("password")}
+							/>
+						</InputGroup>
+					</Field.Root>
+
+					<Stack gap={6}>
+						<Button
+							type="submit"
+							bg={"brand.600"}
+							color={"white"}
+							_hover={{
+								bg: "brand.700",
+							}}
+						>
+							Sign in
+						</Button>
+					</Stack>
+				</Stack>
+			</form>
+		</Box>
+	);
+}
