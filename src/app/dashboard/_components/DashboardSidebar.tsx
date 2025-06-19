@@ -1,10 +1,24 @@
-import { Avatar, Badge, Box, Flex, HStack, Icon, Separator, Text, VStack } from "@chakra-ui/react";
+import { getSession, logout } from "@/utils/actions/auth";
+import {
+	Avatar,
+	Badge,
+	Box,
+	Button,
+	Flex,
+	HStack,
+	Icon,
+	Separator,
+	Text,
+	VStack,
+} from "@chakra-ui/react";
 import Link from "next/link";
 import { IconType } from "react-icons";
+import { FaCircleUser } from "react-icons/fa6";
 import { FiBook, FiHome, FiLogOut, FiPlusCircle, FiUsers } from "react-icons/fi";
 
 const LinkItems = [
 	{ name: "Dashboard", icon: FiHome, href: "/dashboard" },
+	{ name: "Users", icon: FaCircleUser, href: "/dashboard/user" },
 	{ name: "Articles", icon: FiBook, href: "/dashboard/article" },
 	{ name: "Add Article", icon: FiPlusCircle, href: "/dashboard/article/create", indent: true },
 	{ name: "Authors", icon: FiUsers, href: "/dashboard/author" },
@@ -19,7 +33,7 @@ interface NavItemProps {
 	color?: string;
 }
 
-const NavItem = ({ icon: IconLink, children, href, pl = 4, color }: NavItemProps) => {
+export const NavItem = ({ icon: IconLink, children, href, pl = 4, color }: NavItemProps) => {
 	return (
 		<Link href={href}>
 			<HStack>
@@ -50,11 +64,8 @@ const NavItem = ({ icon: IconLink, children, href, pl = 4, color }: NavItemProps
 	);
 };
 
-export default function DashboardSidebar() {
-	const user = {
-		name: "Admin",
-		email: "admin@gmail.com",
-	};
+export default async function DashboardSidebar() {
+	const session = await getSession();
 
 	return (
 		<Box
@@ -74,18 +85,18 @@ export default function DashboardSidebar() {
 			<Box px={4} pb={4}>
 				<HStack gap={3} p={3} rounded="lg">
 					<Avatar.Root size="sm" bg="primary.500" color="white">
-						<Avatar.Fallback name={user?.name} />
+						<Avatar.Fallback name={session.name} />
 					</Avatar.Root>
 					<Box>
 						<Text fontWeight="medium" fontSize="sm">
-							{user?.name}
+							{session.name}
 						</Text>
 						<Text fontSize="xs" color="gray.500">
-							{user?.email}
+							{session.username}
 						</Text>
 					</Box>
 					<Badge colorScheme="primary" ml="auto">
-						Admin
+						{session.role === "admin" ? "Admin" : "Author"}
 					</Badge>
 				</HStack>
 			</Box>
@@ -100,9 +111,14 @@ export default function DashboardSidebar() {
 
 			<Box position="absolute" bottom="5" width="100%" px={3}>
 				<Separator mb={4} />
-				<NavItem icon={FiLogOut} href="/" color="red.500">
-					Log Out
-				</NavItem>
+
+				<form action={logout}>
+					<HStack>
+						<Button type="submit" variant="plain" color="red.500" fontWeight="medium" fontSize="16">
+							<FiLogOut /> Log Out
+						</Button>
+					</HStack>
+				</form>
 			</Box>
 		</Box>
 	);

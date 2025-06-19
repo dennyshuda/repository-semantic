@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { BiHide, BiShow } from "react-icons/bi";
 
 export interface LoginForm {
-	nip: string;
+	username: string;
 	password: string;
 }
 
@@ -36,9 +36,9 @@ export default function LoginForm() {
 				<Stack gap={4}>
 					<Field.Root required>
 						<Field.Label>
-							NIP <Field.RequiredIndicator />
+							Username <Field.RequiredIndicator />
 						</Field.Label>
-						<Input placeholder="123456789" {...register("nip")} />
+						<Input placeholder="Username" {...register("username")} />
 					</Field.Root>
 					<Field.Root required>
 						<Field.Label>

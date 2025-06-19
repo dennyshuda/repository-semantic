@@ -1,4 +1,5 @@
 import { AuthorCard } from "@/components/AuthorCard";
+import HomeGraph from "@/components/HomeGraph";
 import { getAuthorByDepartment } from "@/utils/actions/authors/get-author-department";
 import { departments, expertiseAreas } from "@/utils/constant";
 import {
@@ -29,6 +30,47 @@ export default async function Home() {
 		DSAuthor,
 		DBAuthor,
 	]);
+
+	const nodes = [
+		{ id: "1", name: "Alice", imageUrl: "/images/alice.jpg" },
+		{ id: "2", name: "Bob", imageUrl: "/images/bob.jpg" },
+		{ id: "3", name: "Charlie", imageUrl: "/images/charlie.jpg" },
+		{ id: "4", name: "Diana", imageUrl: "/images/diana.jpg" },
+		{ id: "5", name: "Eve", imageUrl: "/images/eve.jpg" },
+		{ id: "6", name: "Frank", imageUrl: "/images/frank.jpg" },
+		{ id: "7", name: "Grace", imageUrl: "/images/grace.jpg" },
+		{ id: "8", name: "Heidi", imageUrl: "/images/heidi.jpg" },
+		{ id: "9", name: "Ivan", imageUrl: "/images/ivan.jpg" },
+		{ id: "10", name: "Judy", imageUrl: "/images/judy.jpg" },
+		{ id: "11", name: "Mallory", imageUrl: "/images/mallory.jpg" },
+		{ id: "12", name: "Oscar", imageUrl: "/images/oscar.jpg" },
+		{ id: "13", name: "Peggy", imageUrl: "/images/peggy.jpg" },
+		{ id: "14", name: "Quinn", imageUrl: "/images/quinn.jpg" },
+		{ id: "15", name: "Ruth", imageUrl: "/images/ruth.jpg" },
+		{ id: "16", name: "Sybil", imageUrl: "/images/sybil.jpg" },
+		{ id: "17", name: "Trent", imageUrl: "/images/trent.jpg" },
+		{ id: "18", name: "Victor", imageUrl: "/images/victor.jpg" },
+		{ id: "19", name: "Wendy", imageUrl: "/images/wendy.jpg" },
+		{ id: "20", name: "Zara", imageUrl: "/images/zara.jpg" },
+	];
+
+	const generateFullyConnectedGraph = (
+		nodes: {
+			id: string;
+			name: string;
+			imageUrl: string;
+		}[]
+	) => {
+		const links = [];
+		for (let i = 0; i < nodes.length; i++) {
+			for (let j = i + 1; j < nodes.length; j++) {
+				links.push({ source: nodes[i].id, target: nodes[j].id });
+			}
+		}
+		return { nodes, links };
+	};
+
+	const graphData = generateFullyConnectedGraph(nodes);
 
 	return (
 		<Box as="main">
@@ -177,6 +219,8 @@ export default async function Home() {
 						))}
 					</SimpleGrid>
 				</Box>
+
+				<HomeGraph graphData={graphData} />
 			</Container>
 		</Box>
 	);
