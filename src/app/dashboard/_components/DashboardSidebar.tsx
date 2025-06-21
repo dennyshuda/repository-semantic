@@ -14,15 +14,13 @@ import {
 import Link from "next/link";
 import { IconType } from "react-icons";
 import { FaCircleUser } from "react-icons/fa6";
-import { FiBook, FiHome, FiLogOut, FiPlusCircle, FiUsers } from "react-icons/fi";
+import { FiBook, FiHome, FiLogOut, FiUsers } from "react-icons/fi";
 
 const LinkItems = [
 	{ name: "Dashboard", icon: FiHome, href: "/dashboard" },
 	{ name: "Users", icon: FaCircleUser, href: "/dashboard/user" },
 	{ name: "Articles", icon: FiBook, href: "/dashboard/article" },
-	{ name: "Add Article", icon: FiPlusCircle, href: "/dashboard/article/create", indent: true },
 	{ name: "Authors", icon: FiUsers, href: "/dashboard/author" },
-	{ name: "Add Author", icon: FiPlusCircle, href: "/dashboard/author/create", indent: true },
 ];
 
 interface NavItemProps {
@@ -103,7 +101,7 @@ export default async function DashboardSidebar() {
 
 			<VStack gap={1} align="stretch" px={3}>
 				{LinkItems.map((link) => (
-					<NavItem key={link.name} icon={link.icon} href={link.href} pl={link.indent ? 12 : 4}>
+					<NavItem key={link.name} icon={link.icon} href={link.href}>
 						{link.name}
 					</NavItem>
 				))}

@@ -3,6 +3,7 @@
 import { useToggle } from "@/hooks/useToggle";
 import { signin } from "@/utils/actions/auth";
 import { Box, Button, Field, IconButton, Input, InputGroup, Stack } from "@chakra-ui/react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { BiHide, BiShow } from "react-icons/bi";
 
@@ -16,17 +17,18 @@ export default function LoginForm() {
 
 	const { register, reset, handleSubmit } = useForm<LoginForm>();
 
+	const router = useRouter();
+
 	const onSubmit = async (data: LoginForm) => {
 		console.log(data);
 
-		const a = await signin(data);
+		const response = await signin(data);
 
-		if (a.status === 200) {
-			alert("login sucess");
+		if (response.status === 200) {
+			router.push("/dashboard");
 		} else {
-			alert("Invalid credential");
+			alert("failed");
 		}
-
 		reset();
 	};
 
