@@ -20,7 +20,7 @@ export function Footer() {
 				<SimpleGrid columns={{ base: 1, sm: 2, md: 4 }} gap={8}>
 					<Stack gap={6}>
 						<Flex align="center">
-							<Image src="/placeholder.svg?height=30&width=30" alt="Logo" h="30px" mr={3} />
+							<Image src="/FASILKOM.png" alt="Logo" h="25px" mr={3} />
 							<Text fontSize={"lg"} fontWeight="bold">
 								FASILKOM Repository
 							</Text>

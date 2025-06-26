@@ -1,5 +1,6 @@
 import { AuthorCard } from "@/components/AuthorCard";
 import HomeGraph from "@/components/HomeGraph";
+import { getAllAuthors } from "@/utils/actions/authors/get-all-authors";
 import { getAuthorByDepartment } from "@/utils/actions/authors/get-author-department";
 import { departments, expertiseAreas } from "@/utils/constant";
 import {
@@ -23,42 +24,39 @@ export default async function Home() {
 	const DSAuthor = getAuthorByDepartment("sains_data");
 	const ISAuthor = getAuthorByDepartment("sistem_informasi");
 	const DBAuthor = getAuthorByDepartment("bisnis_digital");
+	const allAuthor = getAllAuthors({ name: "", department: "", expertise: "" });
 
-	const [informatics, dataSciences, informationSystems, digitalBusinsess] = await Promise.all([
-		IAuthor,
-		ISAuthor,
-		DSAuthor,
-		DBAuthor,
-	]);
+	const [informatics, dataSciences, informationSystems, digitalBusinsess, authors] =
+		await Promise.all([IAuthor, ISAuthor, DSAuthor, DBAuthor, allAuthor]);
 
-	const nodes = [
-		{ id: "1", name: "Alice", imageUrl: "/images/alice.jpg" },
-		{ id: "2", name: "Bob", imageUrl: "/images/bob.jpg" },
-		{ id: "3", name: "Charlie", imageUrl: "/images/charlie.jpg" },
-		{ id: "4", name: "Diana", imageUrl: "/images/diana.jpg" },
-		{ id: "5", name: "Eve", imageUrl: "/images/eve.jpg" },
-		{ id: "6", name: "Frank", imageUrl: "/images/frank.jpg" },
-		{ id: "7", name: "Grace", imageUrl: "/images/grace.jpg" },
-		{ id: "8", name: "Heidi", imageUrl: "/images/heidi.jpg" },
-		{ id: "9", name: "Ivan", imageUrl: "/images/ivan.jpg" },
-		{ id: "10", name: "Judy", imageUrl: "/images/judy.jpg" },
-		{ id: "11", name: "Mallory", imageUrl: "/images/mallory.jpg" },
-		{ id: "12", name: "Oscar", imageUrl: "/images/oscar.jpg" },
-		{ id: "13", name: "Peggy", imageUrl: "/images/peggy.jpg" },
-		{ id: "14", name: "Quinn", imageUrl: "/images/quinn.jpg" },
-		{ id: "15", name: "Ruth", imageUrl: "/images/ruth.jpg" },
-		{ id: "16", name: "Sybil", imageUrl: "/images/sybil.jpg" },
-		{ id: "17", name: "Trent", imageUrl: "/images/trent.jpg" },
-		{ id: "18", name: "Victor", imageUrl: "/images/victor.jpg" },
-		{ id: "19", name: "Wendy", imageUrl: "/images/wendy.jpg" },
-		{ id: "20", name: "Zara", imageUrl: "/images/zara.jpg" },
-	];
+	// const nodes = [
+	// 	{ id: "1", name: "Alice", imageUrl: "/images/alice.jpg" },
+	// 	{ id: "2", name: "Bob", imageUrl: "/images/bob.jpg" },
+	// 	{ id: "3", name: "Charlie", imageUrl: "/images/charlie.jpg" },
+	// 	{ id: "4", name: "Diana", imageUrl: "/images/diana.jpg" },
+	// 	{ id: "5", name: "Eve", imageUrl: "/images/eve.jpg" },
+	// 	{ id: "6", name: "Frank", imageUrl: "/images/frank.jpg" },
+	// 	{ id: "7", name: "Grace", imageUrl: "/images/grace.jpg" },
+	// 	{ id: "8", name: "Heidi", imageUrl: "/images/heidi.jpg" },
+	// 	{ id: "9", name: "Ivan", imageUrl: "/images/ivan.jpg" },
+	// 	{ id: "10", name: "Judy", imageUrl: "/images/judy.jpg" },
+	// 	{ id: "11", name: "Mallory", imageUrl: "/images/mallory.jpg" },
+	// 	{ id: "12", name: "Oscar", imageUrl: "/images/oscar.jpg" },
+	// 	{ id: "13", name: "Peggy", imageUrl: "/images/peggy.jpg" },
+	// 	{ id: "14", name: "Quinn", imageUrl: "/images/quinn.jpg" },
+	// 	{ id: "15", name: "Ruth", imageUrl: "/images/ruth.jpg" },
+	// 	{ id: "16", name: "Sybil", imageUrl: "/images/sybil.jpg" },
+	// 	{ id: "17", name: "Trent", imageUrl: "/images/trent.jpg" },
+	// 	{ id: "18", name: "Victor", imageUrl: "/images/victor.jpg" },
+	// 	{ id: "19", name: "Wendy", imageUrl: "/images/wendy.jpg" },
+	// 	{ id: "20", name: "Zara", imageUrl: "/images/zara.jpg" },
+	// ];
 
 	const generateFullyConnectedGraph = (
 		nodes: {
 			id: string;
 			name: string;
-			imageUrl: string;
+			image: string;
 		}[]
 	) => {
 		const links = [];
@@ -70,7 +68,7 @@ export default async function Home() {
 		return { nodes, links };
 	};
 
-	const graphData = generateFullyConnectedGraph(nodes);
+	const graphData = generateFullyConnectedGraph(authors.authors);
 
 	return (
 		<Box as="main">
@@ -189,6 +187,16 @@ export default async function Home() {
 					</Suspense>
 				</Tabs.Root>
 
+				<Box mt={20}>
+					<Container>
+						<Heading textAlign="center" fontSize={{ base: "2xl", md: "3xl" }}>
+							Faculty Of Computer Science Researchers
+						</Heading>
+
+						<HomeGraph graphData={graphData} />
+					</Container>
+				</Box>
+
 				<Box my={20}>
 					<Heading textAlign="center" mb={12} fontSize={{ base: "2xl", md: "3xl" }}>
 						Research Areas
@@ -219,8 +227,6 @@ export default async function Home() {
 						))}
 					</SimpleGrid>
 				</Box>
-
-				<HomeGraph graphData={graphData} />
 			</Container>
 		</Box>
 	);

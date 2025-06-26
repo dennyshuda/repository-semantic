@@ -6,7 +6,7 @@ import * as d3 from "d3";
 interface GraphNode {
 	id: string;
 	name: string;
-	imageUrl: string;
+	image: string;
 	x?: number;
 	y?: number;
 	fx?: number | null;
@@ -110,7 +110,7 @@ const HomeGraph: React.FC<HomeGraphProps> = ({ graphData }) => {
 
 		node
 			.append("image")
-			.attr("xlink:href", (d) => d.imageUrl)
+			.attr("xlink:href", (d) => d.image)
 			.attr("x", -30)
 			.attr("y", -30)
 			.attr("width", 60)
