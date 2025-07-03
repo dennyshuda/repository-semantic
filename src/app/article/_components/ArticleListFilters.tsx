@@ -14,26 +14,27 @@ export function ArticleListFilters() {
 	}, 1000);
 
 	return (
-		<Box p={8} borderRadius="xl" boxShadow="sm" borderWidth="1px" mb={8}>
-			<Heading size="lg" mb={2}>
-				Search Academic Journals
+		<Box borderRadius="xl" mb="8">
+			<Heading as="h1" size="3xl" fontWeight="bold" mb="2">
+				Browse Articles
 			</Heading>
 			<Text color="gray.500" mb={6}>
-				Explore our comprehensive collection of peer-reviewed research papers and academic journals.
+				Discover research publications from our faculty
 			</Text>
 
-			<Flex align="center" gap="5">
+			<Flex align="center" gap="5" borderWidth="2px" padding="5" rounded="md">
 				<Box width="full">
-					<InputGroup color="black" startElement={<FiSearch color="black" />}>
+					<InputGroup color="black" startElement={<FiSearch color="gray.500" />}>
 						<Input
 							size="lg"
 							w="full"
-							borderRadius="full"
+							borderRadius="md"
 							placeholder="Search..."
 							onChange={(e) => debounced(e.target.value)}
 						/>
 					</InputGroup>
 				</Box>
+
 				<Box px={4} py={2}>
 					<Button size="sm" colorScheme="brand" width="full">
 						Clear Filters

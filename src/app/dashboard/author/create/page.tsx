@@ -15,6 +15,7 @@ import {
 	VStack,
 } from "@chakra-ui/react";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 
@@ -35,6 +36,8 @@ export default function DashboardCreateAuthorPage() {
 		handleSubmit,
 		formState: { errors },
 	} = useForm<CreateAuthorFormValues>();
+
+	const router = useRouter();
 
 	const onSubmit = async (data: CreateAuthorFormValues) => {
 		const authorId = uuidv4();
@@ -70,12 +73,12 @@ export default function DashboardCreateAuthorPage() {
 					Accept: "application/json",
 				},
 			});
-
 			console.log(response);
-			reset();
-			return response.status;
+			router.push("/dashboard/author");
 		} catch (error) {
 			return error;
+		} finally {
+			reset();
 		}
 	};
 

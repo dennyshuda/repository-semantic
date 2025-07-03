@@ -72,43 +72,43 @@ export default function AuthorEditForm({ author }: AuthorEditFormProps) {
         PREFIX rdf: <http:www.w3.org/1999/02/22-rdf-syntax-ns#>
 
         DELETE { 
-            journal:${author.id} ?p ?o.
-            ?author journal:hasArticle journal:${author.id} .
-            journal:${author.id} journal:isArticleOf ?author .
+        journal:${author.id} ?p ?o.
+        ?author journal:hasArticle journal:${author.id} .
+        journal:${author.id} journal:isArticleOf ?author .
         }
 
         INSERT {
-            journal:${author.id} rdf:type journal:Author;
-            journal:authorId "${author.id}";
-            journal:authorName "${data.name}";
-            journal:authorImage  "${data.image}";
-            journal:authorNip ${data.nip};
-            journal:authorEmail  "${data.email}".
+        journal:${author.id} rdf:type journal:Author;
+        journal:authorId "${author.id}";
+        journal:authorName "${data.name}";
+        journal:authorImage  "${data.image}";
+        journal:authorNip ${data.nip};
+        journal:authorEmail  "${data.email}".
 
-            journal:${author.id} journal:hasMajor journal:${data.departmentId[0]}.
-            journal:${data.departmentId[0]} journal:isMajorOf journal:${author.id}.
+        journal:${author.id} journal:hasMajor journal:${data.departmentId[0]}.
+        journal:${data.departmentId[0]} journal:isMajorOf journal:${author.id}.
 
-            ${data.expertisesId
-							.map((id: string) => `journal:${author.id} journal:hasExpertise journal:${id} .`)
-							.join("\n")}
+        ${data.expertisesId
+					.map((id: string) => `journal:${author.id} journal:hasExpertise journal:${id} .`)
+					.join("\n")}
 
-            ${data.expertisesId
-							.map((id: string) => `journal:${id} journal:isExpertiseOf journal:${author.id} .`)
-							.join("\n")}
+        ${data.expertisesId
+					.map((id: string) => `journal:${id} journal:isExpertiseOf journal:${author.id} .`)
+					.join("\n")}
 
-            ${author.articles
-							.map((a) => `journal:${a.id} journal:isArticleOf journal:${author.id} .`)
-							.join("\n")}
+        ${author.articles
+					.map((a) => `journal:${a.id} journal:isArticleOf journal:${author.id} .`)
+					.join("\n")}
 
-            ${author.articles
-							.map((a) => `journal:${author.id} journal:hasArticle journal:${a.id} .`)
-							.join("\n")}
+        ${author.articles
+					.map((a) => `journal:${author.id} journal:hasArticle journal:${a.id} .`)
+					.join("\n")}
         }
 
         WHERE  {
-            journal:${author.id} ?p ?o .
-            OPTIONAL { ?author journal:hasArticle journal:${author.id} . }
-            OPTIONAL { journal:${author.id} journal:isArticleOf ?author . }
+        journal:${author.id} ?p ?o .
+        OPTIONAL { ?author journal:hasArticle journal:${author.id} . }
+        OPTIONAL { journal:${author.id} journal:isArticleOf ?author . }
         }
 		`;
 

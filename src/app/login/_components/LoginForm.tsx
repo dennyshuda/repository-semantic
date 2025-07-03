@@ -33,7 +33,7 @@ export default function LoginForm() {
 	};
 
 	return (
-		<Box rounded={"lg"} boxShadow={"lg"} p={8} width={{ base: "xs", sm: "sm" }}>
+		<Box width={{ base: "xs", sm: "sm" }}>
 			<form onSubmit={handleSubmit(onSubmit)}>
 				<Stack gap={4}>
 					<Field.Root required>
@@ -68,14 +68,7 @@ export default function LoginForm() {
 					</Field.Root>
 
 					<Stack gap={6}>
-						<Button
-							type="submit"
-							bg={"brand.600"}
-							color={"white"}
-							_hover={{
-								bg: "brand.700",
-							}}
-						>
+						<Button type="submit" colorPalette="green" size="lg" mt={2} fontWeight="semibold">
 							Sign in
 						</Button>
 					</Stack>

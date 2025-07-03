@@ -23,22 +23,18 @@ export interface CreateUserFormValues {
 	authorId: string[];
 	password: string;
 }
+
 export default function DashboardCreateUserPage() {
 	const { register, control, reset, handleSubmit } = useForm<CreateUserFormValues>();
-
 	const router = useRouter();
 	const onSubmit = async (data: CreateUserFormValues) => {
-		console.log(data, data.authorId[0]);
-
 		const { status } = await createUser(data);
 
 		if (status === 201) {
 			router.push("/dashboard/user");
-			console.log("sucess");
 		} else {
-			console.log("gagal");
+			alert("gagal");
 		}
-
 		reset();
 	};
 
@@ -51,6 +47,7 @@ export default function DashboardCreateUserPage() {
 			itemToValue: (author) => author.id,
 		});
 	}, [data?.authors]);
+
 	return (
 		<Box>
 			<Heading size="lg" mb={6}>

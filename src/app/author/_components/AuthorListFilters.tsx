@@ -48,22 +48,21 @@ export function AuthorListFilters() {
 	});
 
 	return (
-		<Box p={8} borderRadius="xl" boxShadow="sm" borderWidth="1px" mb={8}>
-			<Heading size="lg" mb={2}>
-				Find Researchers & Faculty
+		<Box mb="8" borderRadius="xl">
+			<Heading as="h1" size="3xl" fontWeight="bold" mb="2">
+				Faculty Authors
 			</Heading>
-			<Text color="gray.500" mb={6}>
-				Discover leading researchers, faculty members, and experts in various fields of computer
-				science.
+			<Text color="gray.500" mb="6">
+				Meet our distinguished researchers and faculty members
 			</Text>
 
-			<Flex align="center" gap="5">
+			<Flex align="center" gap="5" borderWidth="2px" padding="5" rounded="md">
 				<Box width="full">
 					<InputGroup color="black" startElement={<FiSearch color="black" />}>
 						<Input
 							size="lg"
 							w="full"
-							borderRadius="full"
+							borderRadius="md"
 							value={localName}
 							placeholder="Search author's name"
 							onChange={(e) => setLocalName(e.target.value)}
@@ -139,8 +138,8 @@ export function AuthorListFilters() {
 						colorScheme="brand"
 						width="full"
 						onClick={() => {
-							clearFilter();
 							setLocalName("");
+							clearFilter();
 						}}
 					>
 						Clear Filters

@@ -1,14 +1,14 @@
-import { AuthorCard } from "@/components/AuthorCard";
+import { AuthorCard } from "@/app/author/_components/AuthorCard";
 import HomeGraph from "@/components/HomeGraph";
 import { getAllAuthors } from "@/utils/actions/authors/get-all-authors";
 import { getAuthorByDepartment } from "@/utils/actions/authors/get-author-department";
-import { departments, expertiseAreas } from "@/utils/constant";
+import { expertiseAreas } from "@/utils/constant";
 import {
-	Badge,
 	Box,
+	Button,
 	Container,
+	Grid,
 	Heading,
-	HStack,
 	Input,
 	InputGroup,
 	SimpleGrid,
@@ -16,8 +16,11 @@ import {
 	Tabs,
 	Text,
 } from "@chakra-ui/react";
+import Link from "next/link";
 import { Suspense } from "react";
-import { FiSearch } from "react-icons/fi";
+import { CiGlobe } from "react-icons/ci";
+import { FiBookOpen, FiSearch } from "react-icons/fi";
+import { GoPeople } from "react-icons/go";
 
 export default async function Home() {
 	const IAuthor = getAuthorByDepartment("informatika");
@@ -28,29 +31,6 @@ export default async function Home() {
 
 	const [informatics, dataSciences, informationSystems, digitalBusinsess, authors] =
 		await Promise.all([IAuthor, ISAuthor, DSAuthor, DBAuthor, allAuthor]);
-
-	// const nodes = [
-	// 	{ id: "1", name: "Alice", imageUrl: "/images/alice.jpg" },
-	// 	{ id: "2", name: "Bob", imageUrl: "/images/bob.jpg" },
-	// 	{ id: "3", name: "Charlie", imageUrl: "/images/charlie.jpg" },
-	// 	{ id: "4", name: "Diana", imageUrl: "/images/diana.jpg" },
-	// 	{ id: "5", name: "Eve", imageUrl: "/images/eve.jpg" },
-	// 	{ id: "6", name: "Frank", imageUrl: "/images/frank.jpg" },
-	// 	{ id: "7", name: "Grace", imageUrl: "/images/grace.jpg" },
-	// 	{ id: "8", name: "Heidi", imageUrl: "/images/heidi.jpg" },
-	// 	{ id: "9", name: "Ivan", imageUrl: "/images/ivan.jpg" },
-	// 	{ id: "10", name: "Judy", imageUrl: "/images/judy.jpg" },
-	// 	{ id: "11", name: "Mallory", imageUrl: "/images/mallory.jpg" },
-	// 	{ id: "12", name: "Oscar", imageUrl: "/images/oscar.jpg" },
-	// 	{ id: "13", name: "Peggy", imageUrl: "/images/peggy.jpg" },
-	// 	{ id: "14", name: "Quinn", imageUrl: "/images/quinn.jpg" },
-	// 	{ id: "15", name: "Ruth", imageUrl: "/images/ruth.jpg" },
-	// 	{ id: "16", name: "Sybil", imageUrl: "/images/sybil.jpg" },
-	// 	{ id: "17", name: "Trent", imageUrl: "/images/trent.jpg" },
-	// 	{ id: "18", name: "Victor", imageUrl: "/images/victor.jpg" },
-	// 	{ id: "19", name: "Wendy", imageUrl: "/images/wendy.jpg" },
-	// 	{ id: "20", name: "Zara", imageUrl: "/images/zara.jpg" },
-	// ];
 
 	const generateFullyConnectedGraph = (
 		nodes: {
@@ -72,61 +52,76 @@ export default async function Home() {
 
 	return (
 		<Box as="main">
-			<Box bg="black" color="white" py={20} position="relative" overflow="hidden">
-				<Box
-					position="absolute"
-					top="0"
-					left="0"
-					right="0"
-					bottom="0"
-					bgAttachment="fixed"
-					bgImage="url(https://if.upnjatim.ac.id/bima/data/carousel/210120202218011579619881708.jpg)"
-					opacity="0.5"
-					backgroundSize="cover"
-					backgroundPosition="center"
-				/>
-				<Container maxW="7xl" position="relative" zIndex="1">
+			<Box as="section" paddingY="28">
+				<Container maxW="7xl">
 					<Stack gap={6} textAlign="center" maxW="3xl" mx="auto">
 						<Heading
 							as="h1"
-							fontSize={{ base: "3xl", sm: "4xl", md: "5xl", lg: "6xl" }}
+							fontSize={{ base: "2xl", sm: "3xl", md: "4xl", lg: "5xl" }}
 							fontWeight="bold"
 							lineHeight="shorter"
 						>
 							Discover Research Excellence at FASILKOM
 						</Heading>
-						<Text fontSize={{ base: "lg", md: "xl" }} maxW="2xl" mx="auto">
-							Explore cutting-edge research, academic journals, and scholarly works from our faculty
-							and researchers in computer science and information technology.
+						<Text fontSize={{ base: "lg", md: "xl" }} maxW="2xl" mx="auto" color="gray.500">
+							Discover cutting-edge research and academic publications from our distinguished
+							faculty and students. Advancing knowledge in computer science and technology
+							innovation.
 						</Text>
-
-						<InputGroup color="white" startElement={<FiSearch color="white" />}>
+						<InputGroup
+							startElement={<FiSearch color="gray.500" />}
+							endElement={<Button>Search</Button>}
+							mx="auto"
+						>
 							<Input
 								size="lg"
-								w="full"
-								borderRadius="full"
+								width="full"
+								borderRadius="lg"
 								placeholder="Input your keywords "
-								_placeholder={{ color: "white" }}
+								_placeholder={{ color: "gray.500" }}
 							/>
 						</InputGroup>
 
-						<HStack justify="center" gap={4} wrap="wrap">
-							{departments.map((department, index) => (
-								<Badge
-									key={`department-${index}`}
-									px={3}
-									py={2}
-									bg="white"
-									color="brand.600"
-									fontSize="sm"
-									fontWeight="medium"
-									rounded="full"
-									_hover={{ bg: "gray.100", cursor: "pointer" }}
-								>
-									{department}
-								</Badge>
-							))}
-						</HStack>
+						<Grid templateColumns={{ md: "repeat(3, 1fr)" }} gap="5">
+							<Button
+								asChild
+								color="black"
+								background="white"
+								borderWidth="1px"
+								borderColor="black"
+								paddingX="10"
+							>
+								<Link href="/article">
+									<FiBookOpen />
+									Browse Articles
+								</Link>
+							</Button>
+							<Button
+								asChild
+								color="black"
+								background="white"
+								borderWidth="1px"
+								borderColor="black"
+								paddingX="10"
+							>
+								<Link href="/author">
+									<GoPeople />
+									Find Authors
+								</Link>
+							</Button>
+							<Button
+								asChild
+								color="black"
+								background="white"
+								borderWidth="1px"
+								borderColor="black"
+								paddingX="10"
+							>
+								<Link href="#researchareas">
+									<CiGlobe /> Research Areas
+								</Link>
+							</Button>
+						</Grid>
 					</Stack>
 				</Container>
 			</Box>
@@ -156,28 +151,68 @@ export default async function Home() {
 					</Tabs.List>
 
 					<Suspense fallback={<div>loading..</div>}>
-						<Tabs.Content value="informatics">
-							<SimpleGrid columns={{ base: 1, sm: 2, md: 3 }} gap={8} mt={8}>
+						<Tabs.Content
+							value="informatics"
+							_open={{
+								animationName: "fade-in, scale-in",
+								animationDuration: "300ms",
+							}}
+							_closed={{
+								animationName: "fade-out, scale-out",
+								animationDuration: "120ms",
+							}}
+						>
+							<SimpleGrid columns={{ md: 2, lg: 3 }} gap={8} mt={8}>
 								{informatics.authors.slice(0, 6).map((author) => (
 									<AuthorCard key={author.id} author={author} />
 								))}
 							</SimpleGrid>
 						</Tabs.Content>
-						<Tabs.Content value="data-science">
+						<Tabs.Content
+							value="data-science"
+							_open={{
+								animationName: "fade-in, scale-in",
+								animationDuration: "300ms",
+							}}
+							_closed={{
+								animationName: "fade-out, scale-out",
+								animationDuration: "120ms",
+							}}
+						>
 							<SimpleGrid columns={{ base: 1, sm: 2, md: 3 }} gap={8} mt={8}>
 								{dataSciences.authors.slice(0, 6).map((author) => (
 									<AuthorCard key={author.id} author={author} />
 								))}
 							</SimpleGrid>
 						</Tabs.Content>
-						<Tabs.Content value="information-system">
+						<Tabs.Content
+							value="information-system"
+							_open={{
+								animationName: "fade-in, scale-in",
+								animationDuration: "300ms",
+							}}
+							_closed={{
+								animationName: "fade-out, scale-out",
+								animationDuration: "120ms",
+							}}
+						>
 							<SimpleGrid columns={{ base: 1, sm: 2, md: 3 }} gap={8} mt={8}>
 								{informationSystems.authors.slice(0, 6).map((author) => (
 									<AuthorCard key={author.id} author={author} />
 								))}
 							</SimpleGrid>
 						</Tabs.Content>
-						<Tabs.Content value="digital-business">
+						<Tabs.Content
+							value="digital-business"
+							_open={{
+								animationName: "fade-in, scale-in",
+								animationDuration: "300ms",
+							}}
+							_closed={{
+								animationName: "fade-out, scale-out",
+								animationDuration: "120ms",
+							}}
+						>
 							<SimpleGrid columns={{ base: 1, sm: 2, md: 3 }} gap={8} mt={8}>
 								{digitalBusinsess.authors.slice(0, 6).map((author) => (
 									<AuthorCard key={author.id} author={author} />
@@ -197,7 +232,7 @@ export default async function Home() {
 					</Container>
 				</Box>
 
-				<Box my={20}>
+				<Box my={20} id="researchareas">
 					<Heading textAlign="center" mb={12} fontSize={{ base: "2xl", md: "3xl" }}>
 						Research Areas
 					</Heading>

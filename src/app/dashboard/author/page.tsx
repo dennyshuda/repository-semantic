@@ -41,7 +41,6 @@ export default function DashboardAuthorPage() {
 	}, 1000);
 
 	const handleClickEdit = (author: Author) => {
-		localStorage.setItem("author", JSON.stringify(author));
 		router.push(`/dashboard/author/edit/${author.id}`);
 	};
 
