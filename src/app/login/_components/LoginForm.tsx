@@ -1,5 +1,6 @@
 "use client";
 
+import { toaster, Toaster } from "@/components/ui/toaster";
 import { useToggle } from "@/hooks/useToggle";
 import { signin } from "@/utils/actions/auth";
 import { Box, Button, Field, IconButton, Input, InputGroup, Stack } from "@chakra-ui/react";
@@ -20,20 +21,22 @@ export default function LoginForm() {
 	const router = useRouter();
 
 	const onSubmit = async (data: LoginForm) => {
-		console.log(data);
-
 		const response = await signin(data);
 
 		if (response.status === 200) {
-			router.push("/dashboard");
+			toaster.create({ title: response.message, type: "success" });
+			setTimeout(() => {
+				router.push("/dashboard");
+			}, 2000);
 		} else {
-			alert("failed");
+			toaster.create({ title: response.message, type: "error" });
 		}
 		reset();
 	};
 
 	return (
 		<Box width={{ base: "xs", sm: "sm" }}>
+			<Toaster />
 			<form onSubmit={handleSubmit(onSubmit)}>
 				<Stack gap={4}>
 					<Field.Root required>

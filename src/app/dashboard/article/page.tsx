@@ -28,12 +28,11 @@ import { FiEdit, FiEye, FiPlus, FiSearch, FiTrash2 } from "react-icons/fi";
 import { useDebouncedCallback } from "use-debounce";
 
 export default function DashboardArticlePage() {
-	const router = useRouter();
-
 	const [deleteArticle, setDeleteArticle] = useState<Article>();
+	const [localSearch, setLocalSearch] = useState<string>("");
+	const [open, setOpen] = useState<boolean>(false);
 
-	const [localSearch, setLocalSearch] = useState("");
-	const [open, setOpen] = useState(false);
+	const router = useRouter();
 
 	const { data } = useGetAllArticles({ query: localSearch });
 
@@ -60,125 +59,101 @@ export default function DashboardArticlePage() {
 	};
 
 	const handleClickEdit = (article: Article) => {
-		localStorage.setItem("article", JSON.stringify(article));
 		router.push(`/dashboard/article/edit/${article.id}`);
 	};
 
 	return (
 		<Box>
 			<Toaster />
-			<Flex justify="space-between" align="center" mb={6}>
-				<Box>
-					<Heading size="lg">Article Management</Heading>
-					<Text color="gray.500">Manage all articles in the repository</Text>
-				</Box>
-				<Link href="/dashboard/article/create">
-					<Button colorScheme="primary">
-						<FiPlus />
-						Create New Article
-					</Button>
-				</Link>
-			</Flex>
-
-			<Card.Root shadow="sm" borderRadius="xl">
+			<Card.Root>
 				<Card.Header>
-					<Flex justify="space-between" align="center" mb={4} flexWrap="wrap" gap={4}>
-						<HStack gap={4} flex="1">
-							<InputGroup startElement={<FiSearch />} maxW="300px">
-								<Input
-									placeholder="Search articles..."
-									onChange={(e) => debounced(e.target.value)}
-								/>
-							</InputGroup>
-						</HStack>
+					<Flex justify="space-between" align="center" mb={6}>
+						<Box>
+							<Heading size="lg">Article Management</Heading>
+							<Text color="gray.500">Manage all articles in the repository</Text>
+						</Box>
+						<Link href="/dashboard/article/create">
+							<Button colorScheme="primary">
+								<FiPlus />
+								Create New Article
+							</Button>
+						</Link>
 					</Flex>
 
-					<Text fontSize="sm" color="gray.500">
+					<InputGroup startElement={<FiSearch />}>
+						<Input placeholder="Search articles..." onChange={(e) => debounced(e.target.value)} />
+					</InputGroup>
+
+					<Text marginTop="5" fontSize="sm" color="gray.500">
 						Showing {data?.articles.length} articles
 					</Text>
 				</Card.Header>
 
 				<Card.Body>
-					<Box>
-						<Table.Root>
-							<Table.Header>
-								<Table.Row>
-									<Table.ColumnHeader>Title</Table.ColumnHeader>
-									<Table.ColumnHeader>Authors</Table.ColumnHeader>
-									<Table.ColumnHeader>Year</Table.ColumnHeader>
-									<Table.ColumnHeader>Publisher</Table.ColumnHeader>
-									<Table.ColumnHeader>Actions</Table.ColumnHeader>
+					<Table.Root interactive>
+						<Table.Header>
+							<Table.Row>
+								<Table.ColumnHeader color="gray.500">Title</Table.ColumnHeader>
+								<Table.ColumnHeader color="gray.500">Authors</Table.ColumnHeader>
+								<Table.ColumnHeader color="gray.500">Year</Table.ColumnHeader>
+								<Table.ColumnHeader color="gray.500">Actions</Table.ColumnHeader>
+							</Table.Row>
+						</Table.Header>
+						<Table.Body>
+							{data?.articles.map((article) => (
+								<Table.Row key={article.id}>
+									<Table.Cell>
+										<Text fontWeight="medium" textTransform="uppercase">
+											{article.title}
+										</Text>
+									</Table.Cell>
+									<Table.Cell>
+										<Text fontSize="sm">
+											{article?.authors.split(",").slice(0, 2).join(", ")}
+											{article?.authors.split(",").length > 2 &&
+												` +${article.authors.split(",").length - 2} more`}
+										</Text>
+									</Table.Cell>
+									<Table.Cell>{article.year}</Table.Cell>
+									<Table.Cell>
+										<HStack gap={1}>
+											<Link href={`/article/${article.id}`} target="_blank">
+												<IconButton size="sm" variant="outline" aria-label="View journal">
+													<FiEye />
+												</IconButton>
+											</Link>
+											<IconButton
+												size="sm"
+												variant="outline"
+												aria-label="Edit journal"
+												onClick={() => handleClickEdit(article)}
+											>
+												<FiEdit />
+											</IconButton>
+											<IconButton
+												size="sm"
+												variant="outline"
+												colorPalette="red"
+												aria-label="Delete Article"
+												onClick={() => {
+													setOpen(true);
+													setDeleteArticle(article);
+												}}
+											>
+												<FiTrash2 />
+											</IconButton>
+										</HStack>
+									</Table.Cell>
 								</Table.Row>
-							</Table.Header>
-							<Table.Body>
-								{data?.articles.map((article) => (
-									<Table.Row key={article.id}>
-										<Table.Cell>
-											<Text fontWeight="medium" maxW="300px" textTransform="uppercase">
-												{article.title}
-											</Text>
-											{/* {journal.doi && (
-												<Text fontSize="xs" color="gray.500" mt={1}>
-													DOI: {journal.doi}
-												</Text>
-											)} */}
-										</Table.Cell>
-										<Table.Cell>
-											<Text fontSize="sm" color="gray.600">
-												{article?.authors.split(",").slice(0, 2).join(", ")}
-												{article?.authors.split(",").length > 2 &&
-													` +${article.authors.split(",").length - 2} more`}
-											</Text>
-										</Table.Cell>
-										<Table.Cell>{article.year}</Table.Cell>
-										<Table.Cell>
-											<Text fontWeight="medium">{article.publisher}</Text>
-										</Table.Cell>
-										<Table.Cell>
-											<HStack gap={1}>
-												<Link href={`/article/${article.id}`} target="_blank">
-													<IconButton size="sm" variant="ghost" aria-label="View journal">
-														<FiEye />
-													</IconButton>
-												</Link>
-												<IconButton
-													size="sm"
-													variant="ghost"
-													aria-label="Edit journal"
-													onClick={() => handleClickEdit(article)}
-												>
-													<FiEdit />
-												</IconButton>
-												<IconButton
-													size="sm"
-													variant="ghost"
-													colorScheme="red"
-													aria-label="Delete Article"
-													onClick={() => {
-														setOpen(true);
-														setDeleteArticle(article);
-													}}
-												>
-													<FiTrash2 />
-												</IconButton>
-											</HStack>
-										</Table.Cell>
-									</Table.Row>
-								))}
-							</Table.Body>
-						</Table.Root>
-					</Box>
-					{/* 
+							))}
+						</Table.Body>
+					</Table.Root>
+
 					{data?.articles.length === 0 && (
 						<Flex justify="center" align="center" py={8}>
-							<Text color="gray.500">
-								"No authors found matching your criteria" "No authors found"
-								{searchQuery || categoryFilter
-									? "No authors found matching your criteria"
-									: "No authors found"}
-							</Text>
+							<Text color="gray.500">No articles found matching your criteria</Text>
 						</Flex>
-					)} */}
+					)}
 				</Card.Body>
 			</Card.Root>
 
@@ -188,12 +163,12 @@ export default function DashboardArticlePage() {
 					<Dialog.Positioner>
 						<Dialog.Content>
 							<Dialog.Header>
-								<Dialog.Title>Delete Author</Dialog.Title>
+								<Dialog.Title>Delete Article</Dialog.Title>
 							</Dialog.Header>
 							<Dialog.Body>
-								Are you sure you want to delete{" "}
+								Are you sure you want to delete article with title{" "}
 								<Text as="span" fontWeight="bold">
-									{deleteArticle?.title}
+									&quot;{deleteArticle?.title}&quot;
 								</Text>
 							</Dialog.Body>
 							<Dialog.Footer>

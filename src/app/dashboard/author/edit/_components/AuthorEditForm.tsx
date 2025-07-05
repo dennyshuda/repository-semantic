@@ -1,11 +1,13 @@
 "use client";
 
 import { ENDPOINT_UPDATE, IRI } from "@/utils/constant";
+import { useGetAllExpertises } from "@/utils/hooks/useGetAllExpertises";
 import {
-	Box,
 	Button,
+	Card,
 	createListCollection,
 	Field,
+	Heading,
 	HStack,
 	Input,
 	Portal,
@@ -15,6 +17,7 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 export interface EditAuthorFormValues {
@@ -141,130 +144,137 @@ export default function AuthorEditForm({ author }: AuthorEditFormProps) {
 		],
 	});
 
-	const expertiseList = createListCollection({
-		items: [
-			{ label: "Data Mining", value: "data_mining" },
-			{ label: "Software Engineering", value: "software_engineering" },
-			{ label: "Computer Vision", value: "computer_vision" },
-			{ label: "Computer Network", value: "computer_network" },
-		],
-	});
+	const { data } = useGetAllExpertises();
+
+	const expertiseList = useMemo(() => {
+		return createListCollection({
+			items: data?.expertises ?? [],
+			itemToString: (expertise) => expertise.expertise,
+			itemToValue: (expertise) => expertise.id,
+		});
+	}, [data?.expertises]);
 
 	return (
-		<Box p={6} borderRadius="lg" boxShadow="sm" borderWidth="1px">
-			<form onSubmit={handleSubmit(onSubmit)}>
-				<VStack gap={6} align="stretch">
-					<Field.Root>
-						<Field.Label>Full Name</Field.Label>
-						<Input placeholder="Enter author's full name" {...register("name")} />
-					</Field.Root>
+		<Card.Root>
+			<Card.Header>
+				<Heading size="lg">EDIT AUTHOR</Heading>
+			</Card.Header>
 
-					<Field.Root>
-						<Field.Label>Photo (URL)</Field.Label>
-						<Input placeholder="Enter photo's" {...register("image")} />
-					</Field.Root>
-
-					<SimpleGrid columns={{ base: 1, md: 2 }} gap={6}>
+			<Card.Body>
+				<form onSubmit={handleSubmit(onSubmit)}>
+					<VStack gap={6} align="stretch">
 						<Field.Root>
-							<Field.Label>Email</Field.Label>
-							<Input type="email" placeholder="Enter author's email" {...register("email")} />
+							<Field.Label>Full Name</Field.Label>
+							<Input placeholder="Enter author's full name" {...register("name")} />
 						</Field.Root>
 
 						<Field.Root>
-							<Field.Label>Nip</Field.Label>
-							<Input type="number" placeholder="Enter author's nip" {...register("nip")} />
-						</Field.Root>
-					</SimpleGrid>
-
-					<SimpleGrid columns={{ base: 1, md: 2 }} gap={6}>
-						<Field.Root>
-							<Field.Label>Department</Field.Label>
-							<Controller
-								control={control}
-								name="departmentId"
-								render={({ field }) => (
-									<Select.Root
-										name={field.name}
-										value={field.value}
-										onValueChange={({ value }) => field.onChange(value)}
-										onInteractOutside={() => field.onBlur()}
-										collection={departmentList}
-									>
-										<Select.HiddenSelect />
-										<Select.Control>
-											<Select.Trigger>
-												<Select.ValueText placeholder="Select departments" />
-											</Select.Trigger>
-											<Select.IndicatorGroup>
-												<Select.Indicator />
-											</Select.IndicatorGroup>
-										</Select.Control>
-										<Portal>
-											<Select.Positioner>
-												<Select.Content>
-													{departmentList.items.map((item) => (
-														<Select.Item item={item} key={item.value}>
-															{item.label}
-															<Select.ItemIndicator />
-														</Select.Item>
-													))}
-												</Select.Content>
-											</Select.Positioner>
-										</Portal>
-									</Select.Root>
-								)}
-							/>
+							<Field.Label>Photo (URL)</Field.Label>
+							<Input placeholder="Enter photo's" {...register("image")} />
 						</Field.Root>
 
-						<Field.Root>
-							<Field.Label>Expertises </Field.Label>
-							<Controller
-								control={control}
-								name="expertisesId"
-								render={({ field }) => (
-									<Select.Root
-										multiple
-										name={field.name}
-										value={field.value}
-										onValueChange={({ value }) => field.onChange(value)}
-										onInteractOutside={() => field.onBlur()}
-										collection={expertiseList}
-									>
-										<Select.HiddenSelect />
-										<Select.Control>
-											<Select.Trigger>
-												<Select.ValueText placeholder="Select expertises" />
-											</Select.Trigger>
-											<Select.IndicatorGroup>
-												<Select.Indicator />
-											</Select.IndicatorGroup>
-										</Select.Control>
-										<Portal>
-											<Select.Positioner>
-												<Select.Content>
-													{expertiseList.items.map((item) => (
-														<Select.Item item={item} key={item.value}>
-															{item.label}
-															<Select.ItemIndicator />
-														</Select.Item>
-													))}
-												</Select.Content>
-											</Select.Positioner>
-										</Portal>
-									</Select.Root>
-								)}
-							/>
-						</Field.Root>
-					</SimpleGrid>
+						<SimpleGrid columns={{ base: 1, md: 2 }} gap={6}>
+							<Field.Root>
+								<Field.Label>Email</Field.Label>
+								<Input type="email" placeholder="Enter author's email" {...register("email")} />
+							</Field.Root>
 
-					<HStack justify="flex-end" gap={4} pt={4}>
-						<Button variant="outline">Cancel</Button>
-						<Button type="submit" colorScheme="primary" loadingText="Adding...">
-							Update Author
-						</Button>
-					</HStack>
-				</VStack>
-			</form>
-		</Box>
+							<Field.Root>
+								<Field.Label>Nip</Field.Label>
+								<Input type="number" placeholder="Enter author's nip" {...register("nip")} />
+							</Field.Root>
+						</SimpleGrid>
+
+						<SimpleGrid columns={{ base: 1, md: 2 }} gap={6}>
+							<Field.Root>
+								<Field.Label>Department</Field.Label>
+								<Controller
+									control={control}
+									name="departmentId"
+									render={({ field }) => (
+										<Select.Root
+											name={field.name}
+											value={field.value}
+											onValueChange={({ value }) => field.onChange(value)}
+											onInteractOutside={() => field.onBlur()}
+											collection={departmentList}
+										>
+											<Select.HiddenSelect />
+											<Select.Control>
+												<Select.Trigger>
+													<Select.ValueText placeholder="Select departments" />
+												</Select.Trigger>
+												<Select.IndicatorGroup>
+													<Select.Indicator />
+												</Select.IndicatorGroup>
+											</Select.Control>
+											<Portal>
+												<Select.Positioner>
+													<Select.Content>
+														{departmentList.items.map((item) => (
+															<Select.Item item={item} key={item.value}>
+																{item.label}
+																<Select.ItemIndicator />
+															</Select.Item>
+														))}
+													</Select.Content>
+												</Select.Positioner>
+											</Portal>
+										</Select.Root>
+									)}
+								/>
+							</Field.Root>
+
+							<Field.Root>
+								<Field.Label>Expertises </Field.Label>
+								<Controller
+									control={control}
+									name="expertisesId"
+									render={({ field }) => (
+										<Select.Root
+											multiple
+											name={field.name}
+											value={field.value}
+											onValueChange={({ value }) => field.onChange(value)}
+											onInteractOutside={() => field.onBlur()}
+											collection={expertiseList}
+										>
+											<Select.HiddenSelect />
+											<Select.Control>
+												<Select.Trigger>
+													<Select.ValueText placeholder="Select expertises" />
+												</Select.Trigger>
+												<Select.IndicatorGroup>
+													<Select.Indicator />
+												</Select.IndicatorGroup>
+											</Select.Control>
+											<Portal>
+												<Select.Positioner>
+													<Select.Content>
+														{expertiseList.items.map((item) => (
+															<Select.Item item={item} key={item.id}>
+																{item.expertise}
+																<Select.ItemIndicator />
+															</Select.Item>
+														))}
+													</Select.Content>
+												</Select.Positioner>
+											</Portal>
+										</Select.Root>
+									)}
+								/>
+							</Field.Root>
+						</SimpleGrid>
+
+						<HStack justify="flex-end" gap={4} pt={4}>
+							<Button variant="outline">Cancel</Button>
+							<Button type="submit" colorScheme="primary" loadingText="Adding...">
+								Save
+							</Button>
+						</HStack>
+					</VStack>
+				</form>
+			</Card.Body>
+		</Card.Root>
 	);
 }

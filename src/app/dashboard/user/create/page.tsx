@@ -1,8 +1,9 @@
 "use client";
 
+import { useGetAllAuthors } from "@/utils/hooks/useGetAllAuthors";
 import {
-	Box,
 	Button,
+	Card,
 	createListCollection,
 	Field,
 	Heading,
@@ -12,11 +13,11 @@ import {
 	Select,
 	Stack,
 } from "@chakra-ui/react";
-import { createUser } from "../action";
-import { Controller, useForm } from "react-hook-form";
-import { useGetAllAuthors } from "@/utils/hooks/useGetAllAuthors";
-import { useMemo } from "react";
 import { useRouter } from "next/navigation";
+import { useMemo } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { createUser } from "../action";
+import { toaster, Toaster } from "@/components/ui/toaster";
 
 export interface CreateUserFormValues {
 	name: string;
@@ -28,12 +29,21 @@ export default function DashboardCreateUserPage() {
 	const { register, control, reset, handleSubmit } = useForm<CreateUserFormValues>();
 	const router = useRouter();
 	const onSubmit = async (data: CreateUserFormValues) => {
-		const { status } = await createUser(data);
+		const { status, message } = await createUser(data);
 
 		if (status === 201) {
-			router.push("/dashboard/user");
+			toaster.create({
+				title: "Successfully created",
+				type: "success",
+			});
+			setTimeout(() => {
+				router.push("/dashboard/user");
+			}, 2000);
 		} else {
-			alert("gagal");
+			toaster.create({
+				title: message,
+				type: "error",
+			});
 		}
 		reset();
 	};
@@ -49,12 +59,13 @@ export default function DashboardCreateUserPage() {
 	}, [data?.authors]);
 
 	return (
-		<Box>
-			<Heading size="lg" mb={6}>
-				Add New User
-			</Heading>
+		<Card.Root>
+			<Toaster />
+			<Card.Header>
+				<Heading size="lg">Create New User</Heading>
+			</Card.Header>
 
-			<Box p={6} borderRadius="lg" boxShadow="sm" borderWidth="1px">
+			<Card.Body>
 				<form onSubmit={handleSubmit(onSubmit)}>
 					<Stack gap="4">
 						<Field.Root>
@@ -109,12 +120,12 @@ export default function DashboardCreateUserPage() {
 						<HStack justify="flex-end" gap={4} pt={4}>
 							<Button variant="outline">Cancel</Button>
 							<Button type="submit" colorScheme="primary" loadingText="Adding...">
-								Add User
+								Create User
 							</Button>
 						</HStack>
 					</Stack>
 				</form>
-			</Box>
-		</Box>
+			</Card.Body>
+		</Card.Root>
 	);
 }

@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FiEdit, FiEye, FiSearch, FiTrash2 } from "react-icons/fi";
 import DeleteUserDialog from "./DeleteUserDialog";
+import UserHeader from "./UserHeader";
 
 export interface User {
 	id: number;
@@ -43,17 +44,15 @@ export default function UserTable({ users }: UserTableProps) {
 
 	return (
 		<Box>
-			<Card.Root shadow="sm" borderRadius="xl">
+			<Card.Root>
 				<Card.Header>
-					<Flex justify="space-between" align="center" mb={4} flexWrap="wrap" gap={4}>
-						<HStack gap={4} flex="1">
-							<InputGroup startElement={<FiSearch />} maxW="300px">
-								<Input placeholder="Search users..." />
-							</InputGroup>
-						</HStack>
-					</Flex>
+					<UserHeader />
 
-					<Text fontSize="sm" color="gray.500">
+					<InputGroup startElement={<FiSearch />}>
+						<Input placeholder="Search users..." />
+					</InputGroup>
+
+					<Text fontSize="sm" color="gray.500" marginTop="5">
 						Showing {users.length} users
 					</Text>
 				</Card.Header>
@@ -62,11 +61,11 @@ export default function UserTable({ users }: UserTableProps) {
 					<Table.Root>
 						<Table.Header>
 							<Table.Row>
-								<Table.ColumnHeader>Id</Table.ColumnHeader>
-								<Table.ColumnHeader>Username</Table.ColumnHeader>
-								<Table.ColumnHeader>Name</Table.ColumnHeader>
-								<Table.ColumnHeader>Role</Table.ColumnHeader>
-								<Table.ColumnHeader>Actions</Table.ColumnHeader>
+								<Table.ColumnHeader color="gray.500">Id</Table.ColumnHeader>
+								<Table.ColumnHeader color="gray.500">Username</Table.ColumnHeader>
+								<Table.ColumnHeader color="gray.500">Name</Table.ColumnHeader>
+								<Table.ColumnHeader color="gray.500">Role</Table.ColumnHeader>
+								<Table.ColumnHeader color="gray.500">Actions</Table.ColumnHeader>
 							</Table.Row>
 						</Table.Header>
 						<Table.Body>
@@ -92,12 +91,12 @@ export default function UserTable({ users }: UserTableProps) {
 									</Table.Cell>
 									<Table.Cell>
 										<HStack gap={1}>
-											<IconButton size="sm" variant="ghost" aria-label="View user">
+											<IconButton size="sm" variant="outline" aria-label="View user">
 												<FiEye />
 											</IconButton>
 											<IconButton
 												size="sm"
-												variant="ghost"
+												variant="outline"
 												aria-label="Edit user"
 												onClick={() => {
 													router.push(`/dashboard/user/edit/${user.id}`);
@@ -107,8 +106,8 @@ export default function UserTable({ users }: UserTableProps) {
 											</IconButton>
 											<IconButton
 												size="sm"
-												variant="ghost"
-												colorScheme="red"
+												variant="outline"
+												colorPalette="red"
 												aria-label="Delete user"
 												onClick={() => {
 													setUserId(user.id);

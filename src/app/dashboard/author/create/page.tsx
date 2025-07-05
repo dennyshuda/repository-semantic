@@ -1,9 +1,11 @@
 "use client";
 
+import { Toaster, toaster } from "@/components/ui/toaster";
 import { ENDPOINT_UPDATE, IRI } from "@/utils/constant";
+import { useGetAllExpertises } from "@/utils/hooks/useGetAllExpertises";
 import {
-	Box,
 	Button,
+	Card,
 	createListCollection,
 	Field,
 	Heading,
@@ -16,8 +18,9 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { v4 as uuidv4 } from "uuid";
+import slugify from "react-slugify";
 
 export interface CreateAuthorFormValues {
 	name: string;
@@ -29,18 +32,12 @@ export interface CreateAuthorFormValues {
 }
 
 export default function DashboardCreateAuthorPage() {
-	const {
-		register,
-		control,
-		reset,
-		handleSubmit,
-		formState: { errors },
-	} = useForm<CreateAuthorFormValues>();
+	const { register, control, reset, handleSubmit } = useForm<CreateAuthorFormValues>();
 
 	const router = useRouter();
 
 	const onSubmit = async (data: CreateAuthorFormValues) => {
-		const authorId = uuidv4();
+		const authorId = slugify(data.name, { delimiter: "_" });
 
 		const sparqlQuery = `
 		PREFIX journal: ${IRI}
@@ -73,8 +70,14 @@ export default function DashboardCreateAuthorPage() {
 					Accept: "application/json",
 				},
 			});
-			console.log(response);
-			router.push("/dashboard/author");
+			toaster.create({
+				title: "Successfully created",
+				type: "success",
+			});
+			setTimeout(() => {
+				router.push("/dashboard/author");
+			}, 2000);
+			return response;
 		} catch (error) {
 			return error;
 		} finally {
@@ -91,22 +94,24 @@ export default function DashboardCreateAuthorPage() {
 		],
 	});
 
-	const expertiseList = createListCollection({
-		items: [
-			{ label: "Data Mining", value: "data_mining" },
-			{ label: "Software Engineering", value: "software_engineering" },
-			{ label: "Computer Vision", value: "computer_vision" },
-			{ label: "Computer Network", value: "computer_network" },
-		],
-	});
+	const { data } = useGetAllExpertises();
+
+	const expertiseList = useMemo(() => {
+		return createListCollection({
+			items: data?.expertises ?? [],
+			itemToString: (expertise) => expertise.expertise,
+			itemToValue: (expertise) => expertise.id,
+		});
+	}, [data?.expertises]);
 
 	return (
-		<Box>
-			<Heading size="lg" mb={6}>
-				Add New Author
-			</Heading>
+		<Card.Root>
+			<Toaster />
+			<Card.Header>
+				<Heading>Create New Author</Heading>
+			</Card.Header>
 
-			<Box p={6} borderRadius="lg" boxShadow="sm" borderWidth="1px">
+			<Card.Body>
 				<form onSubmit={handleSubmit(onSubmit)}>
 					<VStack gap={6} align="stretch">
 						<Field.Root required>
@@ -140,8 +145,10 @@ export default function DashboardCreateAuthorPage() {
 						</SimpleGrid>
 
 						<SimpleGrid columns={{ base: 1, md: 2 }} gap={6}>
-							<Field.Root>
-								<Field.Label>Department</Field.Label>
+							<Field.Root required>
+								<Field.Label>
+									Department <Field.RequiredIndicator />
+								</Field.Label>
 								<Controller
 									control={control}
 									name="departmentId"
@@ -178,11 +185,12 @@ export default function DashboardCreateAuthorPage() {
 										</Select.Root>
 									)}
 								/>
-								<Field.ErrorText>{errors.departmentId?.message}</Field.ErrorText>
 							</Field.Root>
 
-							<Field.Root>
-								<Field.Label>Expertises </Field.Label>
+							<Field.Root required>
+								<Field.Label>
+									Expertises <Field.RequiredIndicator />
+								</Field.Label>
 								<Controller
 									control={control}
 									name="expertisesId"
@@ -209,8 +217,8 @@ export default function DashboardCreateAuthorPage() {
 												<Select.Positioner>
 													<Select.Content>
 														{expertiseList.items.map((item) => (
-															<Select.Item item={item} key={item.value}>
-																{item.label}
+															<Select.Item item={item} key={item.id}>
+																{item.expertise}
 																<Select.ItemIndicator />
 															</Select.Item>
 														))}
@@ -226,12 +234,12 @@ export default function DashboardCreateAuthorPage() {
 						<HStack justify="flex-end" gap={4} pt={4}>
 							<Button variant="outline">Cancel</Button>
 							<Button type="submit" colorScheme="primary" loadingText="Adding...">
-								Add Author
+								Create Author
 							</Button>
 						</HStack>
 					</VStack>
 				</form>
-			</Box>
-		</Box>
+			</Card.Body>
+		</Card.Root>
 	);
 }

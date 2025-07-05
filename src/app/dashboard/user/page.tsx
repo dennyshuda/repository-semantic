@@ -1,5 +1,4 @@
 import { Box } from "@chakra-ui/react";
-import UserHeader from "./_components/UserHeader";
 import UserTable from "./_components/UserTable";
 import { getUsers } from "./action";
 
@@ -8,7 +7,6 @@ export default async function DashboardUserPage() {
 
 	return (
 		<Box>
-			<UserHeader />
 			<UserTable users={users} />
 		</Box>
 	);

@@ -1,6 +1,5 @@
 import { getSession } from "@/utils/actions/auth";
 import { Box } from "@chakra-ui/react";
-import CollectionHeader from "./_components/CollectionHeader";
 import CollectionTable from "./_components/CollectionTable";
 
 export default async function CollectionPage() {
@@ -8,7 +7,6 @@ export default async function CollectionPage() {
 
 	return (
 		<Box>
-			<CollectionHeader />
 			<CollectionTable authorId={session?.username} />
 		</Box>
 	);

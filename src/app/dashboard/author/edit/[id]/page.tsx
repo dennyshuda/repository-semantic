@@ -1,6 +1,6 @@
-import { getAuthorById } from "@/utils/actions/authors/get-author-id";
-import { Box, Heading } from "@chakra-ui/react";
 import AuthorEditForm from "@/app/dashboard/author/edit/_components/AuthorEditForm";
+import { getAuthorById } from "@/utils/actions/authors/get-author-id";
+import { Box } from "@chakra-ui/react";
 
 export default async function DashboardEditAuthorPage({
 	params,
@@ -13,10 +13,6 @@ export default async function DashboardEditAuthorPage({
 
 	return (
 		<Box>
-			<Heading size="lg" mb={6}>
-				Edit Author {id}
-			</Heading>
-
 			<AuthorEditForm author={data.author} />
 		</Box>
 	);

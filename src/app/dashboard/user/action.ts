@@ -75,7 +75,7 @@ export async function updateUser({ id, data }: Props) {
 		data: {
 			...(data.name && { name: data.name }),
 			...(data.authorId && { username: data.authorId[0] }),
-			...(data.password && { password: data.password }),
+			...(data.password && { password: await bcrypt.hash(data.password, 10) }),
 		},
 	});
 

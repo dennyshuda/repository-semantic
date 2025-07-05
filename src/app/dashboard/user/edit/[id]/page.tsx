@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import { Box, Heading } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { notFound } from "next/navigation";
 import UserEditForm from "../_components/UserEditForm";
 
@@ -20,10 +20,6 @@ export default async function DashboardEditUserPage({
 
 	return (
 		<Box>
-			<Heading size="lg" mb={6}>
-				Edit User {id}
-			</Heading>
-
 			<UserEditForm id={user.id} name={user.name} username={user.username} />
 		</Box>
 	);

@@ -10,7 +10,7 @@ export default function CollectionHeader() {
 				<Heading size="lg">Collection List</Heading>
 				<Text color="gray.500">Manage all articles in the repository</Text>
 			</Box>
-			<Link href="/dashboard/article/create">
+			<Link href="/dashboard/collection/create">
 				<Button colorScheme="primary">
 					<FiPlus />
 					Create New Article

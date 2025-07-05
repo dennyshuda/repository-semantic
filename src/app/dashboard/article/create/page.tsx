@@ -1,11 +1,11 @@
 "use client";
 
-import { useMemo } from "react";
-import { v4 as uuidv4 } from "uuid";
+import { Toaster, toaster } from "@/components/ui/toaster";
+import { ENDPOINT_UPDATE, IRI } from "@/utils/constant";
 import { useGetAllAuthors } from "@/utils/hooks/useGetAllAuthors";
 import {
-	Box,
 	Button,
+	Card,
 	createListCollection,
 	Field,
 	Heading,
@@ -17,9 +17,11 @@ import {
 	Textarea,
 	VStack,
 } from "@chakra-ui/react";
-import { Controller, useForm } from "react-hook-form";
-import { ENDPOINT_UPDATE, IRI } from "@/utils/constant";
 import axios from "axios";
+import { useRouter } from "next/navigation";
+import { useMemo } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { v4 as uuidv4 } from "uuid";
 
 export interface CreateArticleFormValues {
 	title: string;
@@ -35,9 +37,9 @@ export interface CreateArticleFormValues {
 export default function DashboardCreateArticlePage() {
 	const { register, control, reset, handleSubmit } = useForm<CreateArticleFormValues>();
 
-	const onSubmit = async (data: CreateArticleFormValues) => {
-		console.log(data);
+	const router = useRouter();
 
+	const onSubmit = async (data: CreateArticleFormValues) => {
 		const articleId = uuidv4();
 
 		const sparqlQuery = `
@@ -72,7 +74,13 @@ export default function DashboardCreateArticlePage() {
 				},
 			});
 
-			console.log(response);
+			toaster.create({
+				title: "Successfully created",
+				type: "success",
+			});
+			setTimeout(() => {
+				router.push("/dashboard/article");
+			}, 2000);
 			return response.status;
 		} catch (error) {
 			return error;
@@ -94,12 +102,13 @@ export default function DashboardCreateArticlePage() {
 	}, [data?.authors]);
 
 	return (
-		<Box>
-			<Heading size="lg" mb={6}>
-				Add New Article
-			</Heading>
+		<Card.Root>
+			<Toaster />
+			<Card.Header>
+				<Heading size="lg">Create New Article</Heading>
+			</Card.Header>
 
-			<Box p={6} borderRadius="lg" boxShadow="sm" borderWidth="1px">
+			<Card.Body>
 				<form onSubmit={handleSubmit(onSubmit)}>
 					<VStack gap={6} align="stretch">
 						<Field.Root required>
@@ -192,41 +201,21 @@ export default function DashboardCreateArticlePage() {
 						</SimpleGrid>
 
 						<Field.Root required>
-							<Field.Label>Abstract</Field.Label>
+							<Field.Label>
+								Abstract <Field.RequiredIndicator />
+							</Field.Label>
 							<Textarea size="xl" placeholder="abstract" autoresize {...register("abstract")} />
 						</Field.Root>
 
 						<HStack justify="flex-end" gap={4} pt={4}>
 							<Button variant="outline">Cancel</Button>
-							<Button type="submit" colorScheme="primary" loadingText="Adding...">
-								Add Article
+							<Button type="submit" loadingText="Adding...">
+								Create Article
 							</Button>
 						</HStack>
 					</VStack>
 				</form>
-			</Box>
-		</Box>
+			</Card.Body>
+		</Card.Root>
 	);
 }
-
-// "
-//         PREFIX journal: <http://www.if.upnjatim.ac.id/ontologies/2025/faculty#>
-//         PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-
-//         INSERT DATA {
-//             journal:360b1aef-22f0-45e3-a4c4-c6c9bfe4cfb1 rdf:type journal:Publication;
-//             journal:articleId "360b1aef-22f0-45e3-a4c4-c6c9bfe4cfb1";
-//             journal:articleTitle "Eum id minus exerci";
-//             journal:articleAbstract "undefined";
-//             journal:articleYear 2015;
-//             journal:articleUrl "example.com";
-//             journal:articleDoi  "In duis sint dolori";
-//             journal:articlePublisher "Est fugiat pariatur";
-//             journal:articleKeyword "Data, Diti , Dutu".
-
-//             journal:360b1aef-22f0-45e3-a4c4-c6c9bfe4cfb1 journal:isArticleOf journal:fawwaz_ali_akbar .
-// journal:360b1aef-22f0-45e3-a4c4-c6c9bfe4cfb1 journal:isArticleOf journal:mohamad_irwan_afandi .
-
-//             journal:fawwaz_ali_akbar journal:hasArticle journal:360b1aef-22f0-45e3-a4c4-c6c9bfe4cfb1 .
-// journal:mohamad_irwan_afandi journal:hasArticle journal:360b1aef-22f0-45e3-a4c4-c6c9bfe4cfb1 .
-//         }"
