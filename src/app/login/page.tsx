@@ -1,5 +1,6 @@
 import LoginForm from "@/app/login/_components/LoginForm";
 import { Box, Container, Flex, Heading, Image, Text } from "@chakra-ui/react";
+
 export default async function LoginPage() {
 	return (
 		<Flex minH="100vh">
