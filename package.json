@@ -3,7 +3,7 @@
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
-		"dev": "next dev",
+		"dev": "next dev --turbopack",
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint"
@@ -12,8 +12,9 @@
 		"seed": "tsx prisma/seed.ts"
 	},
 	"dependencies": {
-		"@chakra-ui/react": "^3.19.1",
+		"@chakra-ui/react": "^3.21.1",
 		"@emotion/react": "^11.14.0",
+		"@hookform/resolvers": "^5.1.1",
 		"@prisma/client": "^6.9.0",
 		"@tanstack/react-query": "^5.77.2",
 		"axios": "^1.9.0",
@@ -26,8 +27,10 @@
 		"react-dom": "^19.0.0",
 		"react-hook-form": "^7.56.4",
 		"react-icons": "^5.5.0",
+		"react-slugify": "^4.0.1",
 		"use-debounce": "^10.0.4",
-		"uuid": "^11.1.0"
+		"uuid": "^11.1.0",
+		"zod": "^3.25.75"
 	},
 	"devDependencies": {
 		"@eslint/eslintrc": "^3",
