@@ -108,7 +108,7 @@ export default async function ArticlePageId({ params }: { params: Promise<{ id: 
 						<HStack>
 							<Button>
 								<FaFileAlt />
-								<ChakraLink href={data.article.doi} target="_blank" color="white">
+								<ChakraLink href={data.article.url} target="_blank" color="white">
 									Link Full Text
 								</ChakraLink>
 							</Button>

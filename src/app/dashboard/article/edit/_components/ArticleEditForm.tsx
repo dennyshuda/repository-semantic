@@ -23,6 +23,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { sparqlLiteral } from "@/utils/sparqlLiteral";
 
 export interface EditArticleFormValues {
 	title: string;
@@ -79,13 +80,13 @@ export default function ArticleEditForm({ article }: EditFormProps) {
         INSERT {
             journal:${article.id} rdf:type journal:Publication;
             journal:articleId "${article.id}";
-            journal:articleTitle "${data.title}";
-            journal:articleAbstract "${data.abstract}";
+            journal:articleTitle "${sparqlLiteral(data.title)}";
+            journal:articleAbstract "${sparqlLiteral(data.abstract)}";
             journal:articleYear ${data.year};
-            journal:articleUrl "${data.url}";
-            journal:articleDoi "${data.doi}";
-            journal:articlePublisher "${data.publisher}";
-            journal:articleKeyword "${data.keywords}".
+            journal:articleUrl "${sparqlLiteral(data.url)}";
+            journal:articleDoi "${sparqlLiteral(data.doi)}";
+            journal:articlePublisher "${sparqlLiteral(data.publisher)}";
+            journal:articleKeyword "${sparqlLiteral(data.keywords)}".
 
             ${data.authorId
 							.map((id: string) => `journal:${article.id} journal:isArticleOf journal:${id} .`)

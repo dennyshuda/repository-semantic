@@ -3,6 +3,7 @@
 import { Toaster, toaster } from "@/components/ui/toaster";
 import { ENDPOINT_UPDATE, IRI } from "@/utils/constant";
 import { useGetAllAuthors } from "@/utils/hooks/useGetAllAuthors";
+import { sparqlLiteral } from "@/utils/sparqlLiteral";
 import {
 	Button,
 	Card,
@@ -49,13 +50,13 @@ export default function DashboardCreateArticlePage() {
         INSERT DATA {
             journal:${articleId} rdf:type journal:Publication;
             journal:articleId "${articleId}";
-            journal:articleTitle "${data.title}";
-            journal:articleAbstract "${data.abstract}";
+            journal:articleTitle "${sparqlLiteral(data.title)}";
+            journal:articleAbstract "${sparqlLiteral(data.abstract)}";
             journal:articleYear ${data.year};
-            journal:articleUrl "${data.url}";
-            journal:articleDoi  "${data.doi}";
-            journal:articlePublisher "${data.publisher}";
-            journal:articleKeyword "${data.keywords}".
+            journal:articleUrl "${sparqlLiteral(data.url)}";
+            journal:articleDoi  "${sparqlLiteral(data.doi)}";
+            journal:articlePublisher "${sparqlLiteral(data.publisher)}";
+            journal:articleKeyword "${sparqlLiteral(data.keywords)}".
 
             ${data.authorId
 							.map((id: string) => `journal:${articleId} journal:isArticleOf journal:${id} .`)
@@ -83,6 +84,10 @@ export default function DashboardCreateArticlePage() {
 			}, 2000);
 			return response.status;
 		} catch (error) {
+			toaster.create({
+				title: "Something went wrong",
+				type: "error",
+			});
 			return error;
 		} finally {
 			reset({
