@@ -68,6 +68,7 @@ export default function UserEditForm({ id, name, username }: UserEditFormProps) 
 								render={({ field }) => (
 									<Select.Root
 										required
+										disabled
 										name={field.name}
 										value={field.value}
 										onValueChange={({ value }) => field.onChange(value)}

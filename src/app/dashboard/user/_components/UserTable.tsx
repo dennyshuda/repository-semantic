@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { FiEdit, FiEye, FiSearch, FiTrash2 } from "react-icons/fi";
+import { FiEdit, FiSearch, FiTrash2 } from "react-icons/fi";
 import DeleteUserDialog from "./DeleteUserDialog";
 import UserHeader from "./UserHeader";
 
@@ -91,9 +91,6 @@ export default function UserTable({ users }: UserTableProps) {
 									</Table.Cell>
 									<Table.Cell>
 										<HStack gap={1}>
-											<IconButton size="sm" variant="outline" aria-label="View user">
-												<FiEye />
-											</IconButton>
 											<IconButton
 												size="sm"
 												variant="outline"

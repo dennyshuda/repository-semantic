@@ -6,7 +6,6 @@ import { FiBook, FiHome, FiLogOut, FiUsers, FiUserPlus } from "react-icons/fi";
 import { HiOutlineCollection } from "react-icons/hi";
 
 const LinkItems = [
-	{ name: "Dashboard", icon: FiHome, href: "/dashboard", role: "admin" },
 	{ name: "Articles", icon: FiBook, href: "/dashboard/article", role: "admin" },
 	{ name: "Authors", icon: FiUsers, href: "/dashboard/author", role: "admin" },
 	{ name: "Users", icon: FiUserPlus, href: "/dashboard/user", role: "admin" },
@@ -70,7 +69,7 @@ export default async function DashboardSidebar() {
 		>
 			<Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
 				<Text fontSize="xl" fontWeight="bold">
-					Admin Dashboard
+					{session.role === "admin" ? "Admin Dashboard" : "Author Dashboard"}
 				</Text>
 			</Flex>
 
@@ -94,12 +93,16 @@ export default async function DashboardSidebar() {
 				<Text paddingLeft="4" fontSize="sm" color="gray.500">
 					Management
 				</Text>
-
-				{filteredNav.map((link) => (
-					<NavItem key={link.name} icon={link.icon} href={link.href}>
-						{link.name}
+				<Box>
+					<NavItem icon={FiHome} href="/dashboard">
+						Dashboard
 					</NavItem>
-				))}
+					{filteredNav.map((link) => (
+						<NavItem key={link.name} icon={link.icon} href={link.href}>
+							{link.name}
+						</NavItem>
+					))}
+				</Box>
 			</VStack>
 
 			<Box position="absolute" bottom="5" width="100%" px={3}>

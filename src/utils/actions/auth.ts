@@ -1,12 +1,12 @@
 "use server";
 
-import { LoginForm } from "@/app/login/_components/LoginForm";
+import { LoginFormValue } from "@/app/login/_components/LoginForm";
 import prisma from "@/lib/prisma";
 import { defaultSession, SessionData, sesssionOptions } from "@/lib/session";
-import { getIronSession } from "iron-session";
-import { cookies } from "next/headers";
-import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
+import { getIronSession } from "iron-session";
+import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 
 export async function getSession() {
 	const session = await getIronSession<SessionData>(await cookies(), sesssionOptions);
@@ -18,19 +18,17 @@ export async function getSession() {
 	return session;
 }
 
-export async function signin(data: LoginForm) {
+export async function signin(data: LoginFormValue) {
 	const user = await prisma.user.findUnique({
 		where: {
 			username: data?.username,
 		},
 	});
 
-	console.log(user);
-
 	if (!user) {
 		return {
 			status: 404,
-			message: "not found",
+			message: "Data not found",
 			data: null,
 		};
 	}
@@ -54,14 +52,12 @@ export async function signin(data: LoginForm) {
 	session.isLoggedIn = true;
 	await session.save();
 
-	revalidatePath("/login");
-
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const { password, ...userWithoutPassword } = user;
 
 	return {
 		data: userWithoutPassword,
-		message: "data found",
+		message: "Welcome back",
 		status: 200,
 	};
 }
@@ -69,5 +65,5 @@ export async function signin(data: LoginForm) {
 export async function logout() {
 	const session = await getSession();
 	session.destroy();
-	revalidatePath("/login");
+	revalidatePath("/dashboard");
 }

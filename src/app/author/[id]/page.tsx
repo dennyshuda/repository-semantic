@@ -75,7 +75,7 @@ export default async function AuthorPageId({ params }: { params: Promise<{ id: s
 					<Box width={{ base: "100%", md: "300px" }}>
 						<Box bg="blue.50" p={4} borderRadius="md" mb={4}>
 							<Heading as="h3" size="sm" mb={2}>
-								Major
+								Department
 							</Heading>
 							<Text as="span" fontWeight="bold">
 								{data?.author.department}

@@ -3,12 +3,26 @@ export const IRI = "<http://www.if.upnjatim.ac.id/ontologies/2025/faculty#>";
 export const ENDPOINT = "http://localhost:3030/faculty/sparql";
 export const ENDPOINT_UPDATE = "http://localhost:3030/faculty/update";
 
+export const CAMPUS = {
+	name: 'Universitas Pembangunan Nasional "Veteran" Jawa Timur',
+};
+
+export const RESEARCH_AREAS = [
+	{ name: "Artificial Intelligence", icon: "🤖" },
+	{ name: "Cybersecurity", icon: "🔒" },
+	{ name: "Software Engineering", icon: "💻" },
+	{ name: "Data Science", icon: "📊" },
+	{ name: "Computer Networks", icon: "🌐" },
+	{ name: "Game Developement", icon: "🎮" },
+];
+
 export const departments = [
 	"Informatics",
 	"Data Science",
 	"Information System",
 	"Digital Business",
 ];
+
 export const expertiseAreas = [
 	{
 		name: "Artificial Intelligence",

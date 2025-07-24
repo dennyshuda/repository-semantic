@@ -45,3 +45,17 @@ export const parseCollaboratorsArticle = (data: string) => {
 			};
 		});
 };
+
+export const parseAuthorArticle = (data: string) => {
+	return data
+		.split(",")
+		.map((item) => item.trim())
+		.filter((item) => item)
+		.map((item) => {
+			const [authorName, authorId] = item.split("|");
+			return {
+				name: authorName.trim(),
+				id: authorId.trim(),
+			};
+		});
+};
