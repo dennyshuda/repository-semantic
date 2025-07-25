@@ -5,8 +5,8 @@ import prisma from "@/lib/prisma";
 import { defaultSession, SessionData, sesssionOptions } from "@/lib/session";
 import bcrypt from "bcryptjs";
 import { getIronSession } from "iron-session";
-import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export async function getSession() {
 	const session = await getIronSession<SessionData>(await cookies(), sesssionOptions);
@@ -65,5 +65,5 @@ export async function signin(data: LoginFormValue) {
 export async function logout() {
 	const session = await getSession();
 	session.destroy();
-	revalidatePath("/dashboard");
+	redirect("/login");
 }
