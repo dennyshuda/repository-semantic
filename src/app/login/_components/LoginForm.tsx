@@ -22,7 +22,6 @@ export default function LoginForm() {
 
 	const {
 		register,
-		reset,
 		handleSubmit,
 		formState: { errors },
 	} = useForm<LoginFormValue>({
@@ -42,7 +41,6 @@ export default function LoginForm() {
 		} else {
 			toaster.create({ title: response.message, type: "error" });
 		}
-		reset();
 	};
 
 	return (

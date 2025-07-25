@@ -21,12 +21,13 @@ import { toaster, Toaster } from "@/components/ui/toaster";
 
 export interface CreateUserFormValues {
 	name: string;
+	username: string;
 	authorId: string[];
 	password: string;
 }
 
 export default function DashboardCreateUserPage() {
-	const { register, control, reset, handleSubmit } = useForm<CreateUserFormValues>();
+	const { register, control, handleSubmit } = useForm<CreateUserFormValues>();
 	const router = useRouter();
 	const onSubmit = async (data: CreateUserFormValues) => {
 		const { status, message } = await createUser(data);
@@ -45,7 +46,6 @@ export default function DashboardCreateUserPage() {
 				type: "error",
 			});
 		}
-		reset();
 	};
 
 	const { data } = useGetAllAuthors({ department: "", expertise: "", name: "" });
@@ -112,6 +112,12 @@ export default function DashboardCreateUserPage() {
 							<Field.Label>Name</Field.Label>
 							<Input placeholder="Name" {...register("name")} />
 						</Field.Root>
+
+						<Field.Root>
+							<Field.Label>Username</Field.Label>
+							<Input placeholder="Username" {...register("username")} />
+						</Field.Root>
+
 						<Field.Root>
 							<Field.Label>Password</Field.Label>
 							<Input placeholder="*********" {...register("password")} />

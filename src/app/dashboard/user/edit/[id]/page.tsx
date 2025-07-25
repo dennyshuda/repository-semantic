@@ -12,6 +12,9 @@ export default async function DashboardEditUserPage({
 
 	const user = await prisma.user.findUnique({
 		where: { id: parseInt(id) },
+		omit: {
+			password: true,
+		},
 	});
 
 	if (!user) {
@@ -20,7 +23,7 @@ export default async function DashboardEditUserPage({
 
 	return (
 		<Box>
-			<UserEditForm id={user.id} name={user.name} username={user.username} />
+			<UserEditForm user={user} />
 		</Box>
 	);
 }

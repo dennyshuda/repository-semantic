@@ -30,23 +30,42 @@ export async function getUsers() {
 }
 
 export async function createUser(data: CreateUserFormValues) {
-	const find = await prisma.user.findUnique({
+	const findAuthorId = await prisma.user.findFirst({
 		where: {
-			username: data.authorId[0],
+			authorId: data.authorId[0],
+		},
+		select: {
+			authorId: true,
 		},
 	});
 
-	if (find?.username === data.authorId[0]) {
+	if (findAuthorId?.authorId === data.authorId[0]) {
 		return {
 			status: 400,
-			message: "authorId is exist",
+			message: "authorId is already exist",
+		};
+	}
+
+	const findUsername = await prisma.user.findUnique({
+		where: {
+			username: data.username,
+		},
+		select: {
+			username: true,
+		},
+	});
+
+	if (findUsername?.username === data.username) {
+		return {
+			status: 400,
+			message: "username is already exist",
 		};
 	}
 
 	await prisma.user.create({
 		data: {
 			name: data.name,
-			username: data.authorId[0],
+			username: data.username,
 			authorId: data.authorId[0],
 			role: "author",
 			password: await bcrypt.hash(data.password, 10),
@@ -64,6 +83,7 @@ interface Props {
 		authorId: string[];
 		name: string;
 		password: string;
+		username: string;
 	};
 }
 
@@ -74,7 +94,8 @@ export async function updateUser({ id, data }: Props) {
 		},
 		data: {
 			...(data.name && { name: data.name }),
-			...(data.authorId && { username: data.authorId[0] }),
+			...(data.username && { username: data.username }),
+			...(data.authorId && { authorId: data.authorId[0] }),
 			...(data.password && { password: await bcrypt.hash(data.password, 10) }),
 		},
 	});

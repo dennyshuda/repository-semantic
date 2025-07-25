@@ -18,21 +18,28 @@ import { useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { updateUser } from "../../action";
 
-interface UserEditFormProps {
+interface IUser {
 	id: number;
-	username: string;
 	name: string;
+	username: string;
+	authorId: string;
+	role: string;
+}
+
+interface UserEditFormProps {
+	user: IUser;
 }
 
 export interface EditUserFormValues {
 	name: string;
 	authorId: string[];
+	username: string;
 	password: string;
 }
 
-export default function UserEditForm({ id, name, username }: UserEditFormProps) {
+export default function UserEditForm({ user }: UserEditFormProps) {
 	const { register, control, handleSubmit } = useForm<EditUserFormValues>({
-		defaultValues: { name: name, authorId: [username] },
+		defaultValues: { name: user.name, username: user.username, authorId: [user.authorId] },
 	});
 
 	const { data } = useGetAllAuthors({ department: "", expertise: "", name: "" });
@@ -48,7 +55,7 @@ export default function UserEditForm({ id, name, username }: UserEditFormProps) 
 	const router = useRouter();
 
 	const onSubmit = async (data: EditUserFormValues) => {
-		await updateUser({ id, data });
+		await updateUser({ id: user.id, data });
 
 		router.push("/dashboard/user");
 	};
@@ -105,6 +112,12 @@ export default function UserEditForm({ id, name, username }: UserEditFormProps) 
 							<Field.Label>Name</Field.Label>
 							<Input placeholder="Name" {...register("name")} />
 						</Field.Root>
+
+						<Field.Root>
+							<Field.Label>Username</Field.Label>
+							<Input placeholder="Username" {...register("username")} />
+						</Field.Root>
+
 						<Field.Root>
 							<Field.Label>Password</Field.Label>
 							<Input placeholder="*********" {...register("password")} />
