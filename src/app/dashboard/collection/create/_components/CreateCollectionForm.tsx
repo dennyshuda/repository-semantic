@@ -24,7 +24,7 @@ import { Controller, useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 
 interface CreateCollectionFormProps {
-	username: string;
+	authorId: string;
 }
 
 export interface CreateCollectionFormValues {
@@ -37,7 +37,7 @@ export interface CreateCollectionFormValues {
 	keywords: string;
 	authorId: string[];
 }
-export default function CreateCollectionForm({ username }: CreateCollectionFormProps) {
+export default function CreateCollectionForm({ authorId }: CreateCollectionFormProps) {
 	const { register, control, reset, handleSubmit } = useForm<CreateCollectionFormValues>();
 
 	const router = useRouter();
@@ -74,6 +74,10 @@ export default function CreateCollectionForm({ username }: CreateCollectionFormP
 				headers: {
 					"Content-Type": "application/sparql-update",
 					Accept: "application/json",
+				},
+				auth: {
+					username: "admin",
+					password: "admin",
 				},
 			});
 
@@ -139,7 +143,7 @@ export default function CreateCollectionForm({ username }: CreateCollectionFormP
 											multiple
 											name={field.name}
 											value={field.value}
-											defaultValue={[username]}
+											defaultValue={[authorId]}
 											onValueChange={({ value }) => field.onChange(value)}
 											onInteractOutside={() => field.onBlur()}
 											collection={collection}

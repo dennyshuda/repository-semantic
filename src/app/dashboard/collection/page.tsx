@@ -7,7 +7,7 @@ export default async function CollectionPage() {
 
 	return (
 		<Box>
-			<CollectionTable authorId={session?.username} />
+			<CollectionTable authorId={session.authorId} />
 		</Box>
 	);
 }

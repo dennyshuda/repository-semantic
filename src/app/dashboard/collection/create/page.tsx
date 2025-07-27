@@ -7,7 +7,7 @@ export default async function DashboardCreateCollectionPage() {
 
 	return (
 		<Box>
-			<CreateCollectionForm username={session.username!} />
+			<CreateCollectionForm authorId={session.authorId!} />
 		</Box>
 	);
 }

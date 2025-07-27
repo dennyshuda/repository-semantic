@@ -48,6 +48,7 @@ export async function signin(data: LoginFormValue) {
 	session.id = user.id;
 	session.name = user.name;
 	session.username = user.username;
+	session.authorId = user.authorId;
 	session.role = user.role;
 	session.isLoggedIn = true;
 	await session.save();
